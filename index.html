@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM Vendor Rating · Qonto</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #0a0a0a; --white: #ffffff; --gray50: #fafafa; --gray100: #f5f5f5;
+    --gray200: #ebebeb; --gray300: #d4d4d4; --gray500: #888; --gray600: #666;
+    --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+  }
+  body { font-family: var(--font); background: var(--gray50); color: var(--black); min-height: 100vh; }
+  button { font-family: var(--font); cursor: pointer; }
+  textarea, input { font-family: var(--font); }
+
+  /* ── Nav ── */
+  .nav { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1px solid var(--gray200); padding: 0 24px; display: flex; align-items: center; gap: 0; height: 52px; }
+  .nav-logo { font-size: 13px; font-weight: 600; color: var(--black); margin-right: 24px; white-space: nowrap; }
+  .nav-logo span { font-family: var(--mono); font-size: 10px; color: var(--gray500); margin-left: 8px; font-weight: 400; }
+  .nav-tabs { display: flex; gap: 0; height: 100%; }
+  .nav-tab { height: 100%; padding: 0 16px; background: none; border: none; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 500; color: var(--gray500); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .nav-tab:hover { color: var(--black); }
+  .nav-tab.active { color: var(--black); border-bottom-color: var(--black); }
+
+  /* ── Screens ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── Page shell ── */
+  .page { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
+  .page-wide { max-width: 1000px; margin: 0 auto; padding: 48px 24px; }
+
+  /* ── Typography ── */
+  .eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: #bbb; text-transform: uppercase; margin-bottom: 12px; }
+  h1.hero { font-size: 32px; font-weight: 600; line-height: 1.15; margin-bottom: 8px; }
+  .sub { font-size: 14px; color: var(--gray500); line-height: 1.6; }
+
+  /* ── RFP docs ── */
+  .rfp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 28px; }
+  .rfp-card { background: #fff; border: 1px solid var(--gray200); border-radius: 12px; padding: 20px; display: flex; align-items: flex-start; gap: 14px; transition: border-color 0.15s, box-shadow 0.15s; }
+  .rfp-card:hover { border-color: var(--black); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .rfp-card a { text-decoration: none; display: flex; gap: 14px; width: 100%; }
+  .rfp-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .rfp-icon.pdf { background: #fef2f2; }
+  .rfp-icon.sheet { background: #f0fdf4; }
+  .rfp-icon.doc { background: #eff6ff; }
+  .rfp-icon.pending { background: var(--gray100); }
+  .rfp-name { font-size: 13px; font-weight: 600; color: var(--black); margin-bottom: 3px; }
+  .rfp-meta { font-size: 11px; color: var(--gray500); }
+  .rfp-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-family: var(--mono); padding: 2px 7px; border-radius: 10px; margin-top: 6px; }
+  .rfp-badge.ready { background: #f0fdf4; color: #15803d; }
+  .rfp-badge.pending { background: var(--gray100); color: var(--gray500); }
+
+  /* ── Reviewer cards ── */
+  .reviewer-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 28px; }
+  .reviewer-row { background: #fff; border: 1px solid var(--gray200); border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 16px; }
+  .reviewer-info { flex: 1; }
+  .reviewer-name { font-weight: 600; font-size: 14px; }
+  .reviewer-role { font-size: 12px; color: var(--gray500); margin-top: 2px; }
+  .reviewer-slug { font-family: var(--mono); font-size: 11px; color: #bbb; background: var(--gray100); border-radius: 6px; padding: 4px 10px; flex: 2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .copy-btn { background: var(--gray100); color: var(--black); border: none; border-radius: 7px; padding: 7px 14px; font-size: 12px; font-weight: 500; transition: all 0.15s; white-space: nowrap; }
+  .copy-btn.copied { background: var(--black); color: #fff; }
+
+  /* ── Vendor select ── */
+  .vendor-btn { width: 100%; background: #fff; border: 1px solid var(--gray200); border-radius: 10px; padding: 16px 20px; cursor: pointer; text-align: left; display: flex; align-items: center; justify-content: space-between; transition: all 0.15s; margin-bottom: 8px; }
+  .vendor-btn:hover { background: var(--black); border-color: var(--black); color: #fff; }
+  .vendor-btn:hover .vendor-chev { color: #fff; }
+  .vendor-name { font-weight: 500; font-size: 15px; }
+  .vendor-chev { color: #ccc; font-size: 18px; transition: color 0.15s; }
+  .vendor-btn.done { opacity: 0.4; cursor: default; text-decoration: line-through; }
+
+  /* ── Rating form header ── */
+  .form-header { position: sticky; top: 52px; z-index: 90; background: #fff; border-bottom: 1px solid var(--gray200); padding: 12px 24px; }
+  .form-header-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 16px; }
+  .form-header-title { font-weight: 600; font-size: 15px; }
+  .form-header-sub { font-size: 12px; color: var(--gray500); margin-top: 1px; }
+  .progress-bar { flex: 1; height: 4px; background: var(--gray100); border-radius: 2px; overflow: hidden; max-width: 180px; }
+  .progress-fill { height: 100%; background: var(--black); border-radius: 2px; transition: width 0.3s; }
+  .back-btn { background: none; border: 1px solid var(--gray200); border-radius: 7px; padding: 6px 12px; font-size: 12px; color: var(--gray500); }
+  .back-btn:hover { border-color: var(--black); color: var(--black); }
+
+  /* ── Group tabs ── */
+  .group-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+  .group-tab { background: #fff; color: var(--gray600); border: 1px solid var(--gray200); border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 500; transition: all 0.15s; display: flex; align-items: center; gap: 5px; }
+  .group-tab:hover { border-color: var(--black); color: var(--black); }
+  .group-tab.active { background: var(--black); color: #fff; border-color: var(--black); }
+  .group-badge { border-radius: 10px; padding: 0 6px; font-size: 10px; }
+  .group-tab.active .group-badge { background: rgba(255,255,255,0.2); }
+  .group-tab:not(.active) .group-badge { background: var(--gray100); color: var(--gray500); }
+
+  /* ── Criterion card ── */
+  .criterion-card { background: #fff; border: 1px solid var(--gray200); border-radius: 12px; padding: 18px 20px; margin-bottom: 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; transition: border-color 0.15s; flex-wrap: wrap; }
+  .criterion-card.rated { border-color: var(--black); }
+  .criterion-label { font-weight: 600; font-size: 14px; margin-bottom: 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .criterion-desc { font-size: 12px; color: var(--gray500); }
+  .priority-badge { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 10px; font-family: var(--mono); white-space: nowrap; }
+  .star-row { display: flex; gap: 4px; }
+  .star-btn { background: none; border: none; font-size: 22px; padding: 2px; line-height: 1; transition: color 0.1s, transform 0.1s; color: #e0e0e0; }
+  .star-btn.lit { color: var(--black); transform: scale(1.12); }
+  .star-label { font-size: 10px; color: var(--gray500); font-family: var(--mono); text-align: right; margin-top: 2px; height: 14px; }
+
+  /* ── Nav arrows ── */
+  .nav-arrows { display: flex; gap: 8px; margin-bottom: 28px; }
+  .nav-prev { flex: 1; background: #fff; border: 1px solid var(--gray200); border-radius: 10px; padding: 12px; font-size: 13px; color: var(--gray600); }
+  .nav-prev:hover { border-color: var(--black); color: var(--black); }
+  .nav-next { flex: 1; background: var(--black); border: none; border-radius: 10px; padding: 12px; font-size: 13px; color: #fff; font-weight: 500; }
+
+  /* ── Overall box ── */
+  .overall-box { background: #fff; border: 1px solid var(--gray200); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+  .overall-title { font-weight: 600; font-size: 14px; margin-bottom: 18px; }
+  .rec-row { display: flex; gap: 8px; }
+  .rec-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 500; transition: all 0.15s; }
+  .rec-btn.inactive { background: #fff; border: 1px solid var(--gray200); color: var(--gray600); }
+  .rec-btn.active { background: var(--black); border: 1px solid var(--black); color: #fff; }
+  .comment-label { font-size: 12px; color: var(--gray500); margin-bottom: 8px; margin-top: 18px; }
+  .comment-area { width: 100%; border: 1px solid var(--gray200); border-radius: 8px; padding: 10px 12px; font-size: 13px; resize: vertical; outline: none; background: var(--gray50); transition: border-color 0.15s; }
+  .comment-area:focus { border-color: var(--black); }
+
+  /* ── Submit btn ── */
+  .submit-btn { width: 100%; background: var(--black); color: #fff; border: none; border-radius: 12px; padding: 16px; font-size: 15px; font-weight: 600; transition: all 0.2s; margin-bottom: 48px; }
+  .submit-btn:disabled { background: var(--gray200); color: var(--gray500); cursor: not-allowed; }
+
+  /* ── Success screen ── */
+  .success-wrap { min-height: calc(100vh - 52px); display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .success-box { max-width: 420px; width: 100%; text-align: center; }
+  .success-icon { font-size: 48px; margin-bottom: 20px; }
+  .success-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+  .success-sub { font-size: 14px; color: var(--gray500); margin-bottom: 32px; }
+  .next-btn { background: var(--black); color: #fff; border: none; border-radius: 12px; padding: 14px 28px; font-size: 14px; font-weight: 500; }
+
+  /* ── Scorecard ── */
+  .scorecard-wrap { overflow-x: auto; }
+  .scorecard-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .scorecard-table th { background: var(--black); color: #fff; padding: 10px 14px; text-align: left; font-weight: 500; white-space: nowrap; font-size: 12px; }
+  .scorecard-table th.vendor-col { text-align: center; min-width: 110px; }
+  .scorecard-table td { padding: 10px 14px; border-bottom: 1px solid var(--gray100); vertical-align: middle; }
+  .scorecard-table tr:hover td { background: var(--gray50); }
+  .scorecard-table .group-row td { background: var(--gray100); font-weight: 600; font-size: 11px; font-family: var(--mono); letter-spacing: 1px; text-transform: uppercase; color: var(--gray500); padding: 7px 14px; }
+  .score-cell { text-align: center; font-weight: 600; font-family: var(--mono); }
+  .score-cell.high { color: #15803d; }
+  .score-cell.mid { color: #b45309; }
+  .score-cell.low { color: #b91c1c; }
+  .score-cell.none { color: #ccc; font-weight: 400; }
+  .total-row td { background: var(--black) !important; color: #fff; font-weight: 600; border: none; }
+  .total-row .score-cell { color: #fff; }
+  .rank-row td { background: var(--gray100); font-size: 12px; }
+  .rank-cell { text-align: center; font-weight: 700; font-size: 15px; }
+  .rec-cell { text-align: center; font-size: 16px; }
+  .stars-display { display: flex; gap: 2px; justify-content: center; }
+  .star-mini { font-size: 12px; color: var(--black); }
+  .star-mini.empty { color: #e8e8e8; }
+  .weight-badge { font-family: var(--mono); font-size: 10px; color: var(--gray500); background: var(--gray100); padding: 2px 6px; border-radius: 4px; margin-left: 8px; }
+
+  /* ── Alerts / info ── */
+  .info-box { padding: 14px 18px; border-radius: 10px; font-size: 13px; margin-bottom: 24px; }
+  .info-box.green { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+  .info-box.blue { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+  .info-box.gray { background: var(--gray100); color: var(--gray600); border: 1px solid var(--gray200); }
+
+  /* ── Divider ── */
+  .section-gap { margin-top: 48px; padding-top: 40px; border-top: 1px solid var(--gray200); }
+
+  @media (max-width: 600px) {
+    .nav-tab { padding: 0 10px; font-size: 12px; }
+    .page, .page-wide { padding: 28px 16px; }
+    .reviewer-slug { display: none; }
+    .form-header { padding: 10px 16px; }
+    .scorecard-table { font-size: 11px; }
+    .scorecard-table th, .scorecard-table td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav class="nav">
+  <div class="nav-logo">Qonto DAM <span>2026</span></div>
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" onclick="showTab('rfp')">📄 RFP Documents</button>
+    <button class="nav-tab" onclick="showTab('rate')" id="rateTabBtn">⭐ Rate Vendors</button>
+    <button class="nav-tab" onclick="showTab('scorecard')">📊 Scorecard</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TAB 1 — RFP Documents                                  -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="screen active" id="tab-rfp">
+  <div class="page">
+    <div class="eyebrow">DAM Platform · RFP 2026</div>
+    <h1 class="hero">Vendor Proposals</h1>
+    <p class="sub" style="margin-bottom:0">All submitted RFP documents are listed below. Review each vendor's proposal before rating. Click a card to open the document.</p>
+
+    <div class="rfp-grid" id="rfpGrid">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="section-gap">
+      <div class="eyebrow">Reference documents</div>
+      <h2 style="font-size:20px;font-weight:600;margin-bottom:8px">Supporting materials</h2>
+      <p class="sub" style="margin-bottom:20px">Background documents to support your evaluation.</p>
+      <div class="rfp-grid">
+        <div class="rfp-card">
+          <a href="https://docs.google.com/spreadsheets/d/14jzh-JDO4sG2J61BdNV3ZF-AT7xvwzxqTp4Dri0Q8-Y/edit" target="_blank">
+            <div class="rfp-icon sheet">📋</div>
+            <div>
+              <div class="rfp-name">RFP Requirements</div>
+              <div class="rfp-meta">Google Sheets · Full requirements matrix</div>
+              <div><span class="rfp-badge ready">✓ Available</span></div>
+            </div>
+          </a>
+        </div>
+        <div class="rfp-card">
+          <a href="https://docs.google.com/document/d/1fGgrfQEpKzIz4oC7t8UBkPJ-WcUmCBhw/edit" target="_blank">
+            <div class="rfp-icon doc">📝</div>
+            <div>
+              <div class="rfp-name">RFP Main Document</div>
+              <div class="rfp-meta">Google Doc · Full RFP with legal & ESG terms</div>
+              <div><span class="rfp-badge ready">✓ Available</span></div>
+            </div>
+          </a>
+        </div>
+        <div class="rfp-card">
+          <a href="https://docs.google.com/spreadsheets/d/1_uMMllN0vaxuGzOfo7c_zC_FOwk4b1d8/edit" target="_blank">
+            <div class="rfp-icon sheet">📊</div>
+            <div>
+              <div class="rfp-name">Scoring Grid Example</div>
+              <div class="rfp-meta">Google Sheets · Reference scoring format</div>
+              <div><span class="rfp-badge ready">✓ Available</span></div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-gap">
+      <div class="eyebrow">Timeline</div>
+      <h2 style="font-size:20px;font-weight:600;margin-bottom:20px">Evaluation schedule</h2>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div id="timelineEl"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TAB 2 — Rate Vendors                                   -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="screen" id="tab-rate">
+
+  <!-- Step 0: Reviewer entry -->
+  <div id="step-entry">
+    <div class="page">
+      <div class="eyebrow">Vendor Evaluation · 2026</div>
+      <h1 class="hero">Who are you?</h1>
+      <p class="sub" style="margin-bottom:32px">Select your name to access your personalised rating form. You'll only see criteria relevant to your role.</p>
+      <div id="reviewerList"></div>
+    </div>
+  </div>
+
+  <!-- Step 1: Vendor selection -->
+  <div id="step-vendor" style="display:none">
+    <div class="page">
+      <div id="vendorGreeting"></div>
+      <div id="vendorList"></div>
+    </div>
+  </div>
+
+  <!-- Step 2: Rating -->
+  <div id="step-rating" style="display:none">
+    <div class="form-header">
+      <div class="form-header-inner">
+        <div>
+          <div class="form-header-title" id="ratingVendorTitle"></div>
+          <div class="form-header-sub" id="ratingProgress"></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <button class="back-btn" onclick="goToVendorSelect()">← Back</button>
+      </div>
+    </div>
+    <div class="page">
+      <div class="group-tabs" id="groupTabs"></div>
+      <div id="criteriaCards"></div>
+      <div class="nav-arrows" id="navArrows"></div>
+      <div id="overallSection" style="display:none">
+        <div class="overall-box">
+          <div class="overall-title">Overall assessment</div>
+          <div style="font-size:12px;color:var(--gray500);margin-bottom:10px">Would you recommend <span id="overallVendorName"></span>?</div>
+          <div class="rec-row">
+            <button class="rec-btn inactive" id="recYes" onclick="setRec('Yes')">Yes</button>
+            <button class="rec-btn inactive" id="recMaybe" onclick="setRec('Maybe')">Maybe</button>
+            <button class="rec-btn inactive" id="recNo" onclick="setRec('No')">No</button>
+          </div>
+          <div class="comment-label">Key comment (optional)</div>
+          <textarea class="comment-area" id="commentArea" rows="3" placeholder="Strengths, concerns, open questions…"></textarea>
+        </div>
+        <button class="submit-btn" id="submitBtn" onclick="submitRating()" disabled>Submit ratings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Success -->
+  <div id="step-success" style="display:none">
+    <div class="success-wrap">
+      <div class="success-box">
+        <div class="success-icon">✓</div>
+        <div class="success-title">Submitted!</div>
+        <p class="success-sub">Your ratings for <strong id="successVendorName"></strong> have been saved.</p>
+        <button class="next-btn" id="nextVendorBtn" onclick="goToVendorSelect()">Rate another vendor →</button>
+        <p id="allDoneMsg" style="display:none;color:var(--gray500);font-size:13px">You've rated all vendors. Thank you!</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TAB 3 — Scorecard                                      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="screen" id="tab-scorecard">
+  <div class="page-wide">
+    <div class="eyebrow">Live results</div>
+    <h1 class="hero" style="margin-bottom:8px">Scorecard</h1>
+    <p class="sub" style="margin-bottom:32px">Weighted average scores across all reviewers · 1 = Poor → 5 = Excellent · Updates in real time as ratings come in.</p>
+    <div class="scorecard-wrap" id="scorecardWrap"></div>
+    <div style="margin-top:16px;display:flex;gap:24px;flex-wrap:wrap">
+      <div style="font-size:12px;color:var(--gray500)">
+        <span style="color:#15803d;font-weight:600">●</span> 4.0–5.0 &nbsp;
+        <span style="color:#b45309;font-weight:600">●</span> 3.0–3.9 &nbsp;
+        <span style="color:#b91c1c;font-weight:600">●</span> 1.0–2.9
+      </div>
+      <button onclick="exportCSV()" style="background:var(--gray100);border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:500;color:var(--black)">⬇ Export CSV</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+
+const VENDORS = [
+  { name: "Canto",              rfpUrl: null },
+  { name: "Cloudinary",         rfpUrl: null },
+  { name: "Bynder",             rfpUrl: null },
+  { name: "Qontent (internal)", rfpUrl: null },
+  { name: "Smartsheet",         rfpUrl: null },
+  { name: "Aprimo",             rfpUrl: null },
+];
+
+const TIMELINE = [
+  { date: "19 May", label: "RFP Launch", done: true },
+  { date: "25 May", label: "Q&A Answers shared", done: true, today: true },
+  { date: "2 Jun",  label: "RFP Submissions deadline", done: false },
+  { date: "5 Jun",  label: "Shortlist Announcement", done: false },
+  { date: "8–19 Jun", label: "Demo + POC", done: false },
+  { date: "24 Jun", label: "Supplier Selection", done: false },
+  { date: "29 Jun", label: "Project Start", done: false },
+];
+
+const CRITERIA = {
+  "F1":  { label: "Search & filters",       desc: "Advanced search, saved views",              priority: "Must Have",   group: "Functional",   weight: 1 },
+  "F2":  { label: "AI semantic search",     desc: "AI-powered asset discovery",                priority: "Should Have", group: "Functional",   weight: 0.8 },
+  "F3":  { label: "Asset lifecycle",        desc: "Draft → Approved → Live → Expired",         priority: "Must Have",   group: "Functional",   weight: 1 },
+  "F4":  { label: "Granular permissions",   desc: "Asset-level + folder-level per team",        priority: "Must Have",   group: "Functional",   weight: 1 },
+  "F5":  { label: "Metadata schema",        desc: "Rich, customisable metadata",                priority: "Must Have",   group: "Functional",   weight: 1 },
+  "F6":  { label: "Taxonomy governance",    desc: "Controlled vocabularies",                   priority: "Must Have",   group: "Functional",   weight: 1 },
+  "F7":  { label: "AI auto-tagging",        desc: "Auto-tagging on ingest",                    priority: "Must Have",   group: "Functional",   weight: 1 },
+  "F8":  { label: "Version control",        desc: "Asset history & versioning",                priority: "Should Have", group: "Functional",   weight: 0.8 },
+  "F9":  { label: "Brand portal",           desc: "Public-facing brand module",                priority: "Could Have",  group: "Functional",   weight: 0.5 },
+  "F10": { label: "OOH / non-digital",      desc: "Support for non-digital assets",            priority: "Should Have", group: "Functional",   weight: 0.8 },
+  "F11": { label: "UX quality",             desc: "Ease of use, interface quality",            priority: "—",           group: "Functional",   weight: 0.9 },
+  "D1":  { label: "Creative file formats",  desc: "Figma, PSD, AI, MP4, 4K, SVG…",            priority: "Must Have",   group: "Design",       weight: 1 },
+  "D2":  { label: "Figma plugin",           desc: "Figma plugin or direct integration",        priority: "Should Have", group: "Design",       weight: 0.8 },
+  "D3":  { label: "Figma sync",             desc: "Two-way Figma connector",                   priority: "Could Have",  group: "Design",       weight: 0.5 },
+  "D4":  { label: "Bulk ingest",            desc: "Bulk ingest with metadata preservation",    priority: "Must Have",   group: "Design",       weight: 1 },
+  "D5":  { label: "Format conversion",      desc: "Automated format conversion",               priority: "Should Have", group: "Design",       weight: 0.8 },
+  "D6":  { label: "Migration support",      desc: "Onboarding & migration quality",            priority: "—",           group: "Design",       weight: 0.9 },
+  "P1":  { label: "Performance data",       desc: "Performance data linked to each asset",     priority: "Must Have",   group: "Performance",  weight: 1 },
+  "P2":  { label: "Media data plug",        desc: "Plug media data for paid acquisition",      priority: "Must Have",   group: "Performance",  weight: 1 },
+  "P3":  { label: "Asset ↔ landing page",   desc: "Asset linked to landing page + tracking",  priority: "Should Have", group: "Performance",  weight: 0.8 },
+  "P4":  { label: "Usage analytics",        desc: "Internal usage tracking & analytics",       priority: "Should Have", group: "Performance",  weight: 0.8 },
+  "P5":  { label: "Automated taxonomy",     desc: "Taxonomy supporting campaign structure",    priority: "Must Have",   group: "Performance",  weight: 1 },
+  "T1":  { label: "API quality",            desc: "Clean, documented API, generous rate limits",priority: "Must Have",  group: "Technical",    weight: 1 },
+  "T2":  { label: "Webhooks",               desc: "Webhook / event-driven architecture",       priority: "Must Have",   group: "Technical",    weight: 1 },
+  "T3":  { label: "AI/LLM compatibility",   desc: "Claude can pull assets via API",            priority: "Must Have",   group: "Technical",    weight: 1 },
+  "T4":  { label: "CDN delivery",           desc: "CDN / direct URL delivery",                 priority: "Should Have", group: "Technical",    weight: 0.8 },
+  "T5":  { label: "Slack integration",      desc: "Native Slack integration",                  priority: "Could Have",  group: "Technical",    weight: 0.5 },
+  "T6":  { label: "EEA data residency",     desc: "Data stored in EEA",                        priority: "Must Have",   group: "Technical",    weight: 1 },
+  "T7":  { label: "Security standards",     desc: "SOC2 or equivalent audit report",           priority: "Must Have",   group: "Technical",    weight: 1 },
+  "T8":  { label: "Scalability & uptime",   desc: "Reliability and uptime SLA",                priority: "Must Have",   group: "Technical",    weight: 1 },
+  "T9":  { label: "Rights management",      desc: "Rights management module",                  priority: "Could Have",  group: "Technical",    weight: 0.5 },
+  "C1":  { label: "Pricing",                desc: "Competitive and transparent pricing",       priority: "—",           group: "Commercial",   weight: 1 },
+  "C2":  { label: "NET45 payment",          desc: "NET45, SEPA or bank transfer",              priority: "Must Have",   group: "Commercial",   weight: 0.8 },
+  "C3":  { label: "SLA coverage",           desc: "Technical + operational + support SLAs",    priority: "Must Have",   group: "Commercial",   weight: 1 },
+  "C4":  { label: "SLA penalties",          desc: "Penalties + termination rights on breach",  priority: "Must Have",   group: "Commercial",   weight: 1 },
+  "C5":  { label: "Liability cap",          desc: "Min 3× annual fees; breaches carved out",   priority: "Must Have",   group: "Commercial",   weight: 1 },
+  "C6":  { label: "API change notice",      desc: "3 months notice; old version 6+ months",    priority: "Must Have",   group: "Commercial",   weight: 0.8 },
+  "C7":  { label: "Contract duration",      desc: "Max 12 months incl. implementation",        priority: "Must Have",   group: "Commercial",   weight: 0.8 },
+  "C8":  { label: "French law",             desc: "French law, Paris courts jurisdiction",     priority: "Must Have",   group: "Commercial",   weight: 0.8 },
+  "C9":  { label: "DPA compliance",         desc: "Data Processing Agreement",                 priority: "Must Have",   group: "Commercial",   weight: 1 },
+  "C10": { label: "ESG / EcoVadis",         desc: "EcoVadis or equivalent evidence",           priority: "Must Have",   group: "Commercial",   weight: 0.9 },
+  "C11": { label: "EEA data transfer",      desc: "Sub-processor list + EEA-only transfers",   priority: "Must Have",   group: "Commercial",   weight: 1 },
+  "C12": { label: "References quality",     desc: "Strong references in banking / fintech",    priority: "—",           group: "Commercial",   weight: 0.9 },
+};
+
+const GROUP_WEIGHTS = { Functional: 30, Design: 20, Performance: 20, Technical: 20, Commercial: 10 };
+const GROUP_ICONS   = { Functional: "◈", Design: "◇", Performance: "◉", Technical: "◎", Commercial: "◫" };
+const STAR_LABELS   = ["", "Poor", "Fair", "Good", "Great", "Excellent"];
+
+const REVIEWERS = {
+  "hortense": { name: "Hortense",      role: "Growth Programs Manager",           criteria: ["F1","F2","F3","F4","F6","D4","D6","P1","P3","P4","P5","C1","C12"] },
+  "julie":    { name: "Julie R",       role: "Brand, Comms & Creativity Director", criteria: ["F1","F2","F3","F4","F9","F10","F11","T9"] },
+  "didier":   { name: "Didier H",      role: "Design Director",                   criteria: ["F1","F2","F5","F8","F11","D1","D2","D3"] },
+  "carla":    { name: "Carla",         role: "Head of Brand Design",              criteria: ["F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","D1","D2","D3","T9"] },
+  "soline":   { name: "Soline A",      role: "Design Ops & Enablement",           criteria: ["F1","F3","F4","F5","F6","F7","F8","F10","F11","D1","D2","D4","D5","D6"] },
+  "alex":     { name: "Alex Laloo",    role: "Head of Growth Ops",                criteria: ["P1","P2","P4","P5","T1","T2","T5"] },
+  "vincent":  { name: "Vincent Martin",role: "Head of Growth Programs",           criteria: ["P1","P2","P3","P4"] },
+  "teresa":   { name: "Teresa",        role: "Head of Paid Acquisition",          criteria: ["P1","P2","P3","P4","P5"] },
+  "seb":      { name: "Seb",           role: "Website Engineer",                  criteria: ["T1","T2","T3","T4","T5","T6","T8","C6"] },
+  "aymeric":  { name: "Aymeric",       role: "CTO",                               criteria: ["T1","T2","T3","T4","T6","T7","T8","C3","C6","C9","C11"] },
+  "polina":   { name: "Polina",        role: "Procurement / Legal",               criteria: ["T6","T7","C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11","C12"] },
+};
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+// Storage key: dam_ratings_v1
+// Format: { "reviewerKey:vendorName:criterionId": score, "reviewerKey:vendorName:_rec": "Yes/No/Maybe", "reviewerKey:vendorName:_comment": "..." }
+
+function getStorage() {
+  try { return JSON.parse(localStorage.getItem('dam_ratings_v1') || '{}'); } catch(e) { return {}; }
+}
+function setStorage(data) {
+  localStorage.setItem('dam_ratings_v1', JSON.stringify(data));
+}
+function saveScore(reviewer, vendor, criterionId, score) {
+  const d = getStorage(); d[`${reviewer}:${vendor}:${criterionId}`] = score; setStorage(d);
+}
+function getScore(reviewer, vendor, criterionId) {
+  return getStorage()[`${reviewer}:${vendor}:${criterionId}`] || 0;
+}
+function saveRec(reviewer, vendor, rec) {
+  const d = getStorage(); d[`${reviewer}:${vendor}:_rec`] = rec; setStorage(d);
+}
+function getRec(reviewer, vendor) {
+  return getStorage()[`${reviewer}:${vendor}:_rec`] || null;
+}
+function saveComment(reviewer, vendor, comment) {
+  const d = getStorage(); d[`${reviewer}:${vendor}:_comment`] = comment; setStorage(d);
+}
+function isVendorComplete(reviewer, vendor) {
+  const s = getStorage();
+  return !!s[`${reviewer}:${vendor}:_rec`];
+}
+
+// ═══════════════════════════════════════════
+// APP STATE
+// ═══════════════════════════════════════════
+let currentReviewer = null;
+let currentVendor   = null;
+let currentGroup    = null;
+let currentRec      = null;
+let hoveredStars    = {}; // criterionId -> hovered value
+
+// ═══════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════
+function showTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const idx = ['rfp','rate','scorecard'].indexOf(tab);
+  if (idx >= 0) tabs[idx].classList.add('active');
+  if (tab === 'scorecard') renderScorecard();
+}
+
+// ═══════════════════════════════════════════
+// TAB 1 — RFP DOCUMENTS
+// ═══════════════════════════════════════════
+function renderRFP() {
+  // Vendor proposals grid
+  const grid = document.getElementById('rfpGrid');
+  grid.innerHTML = VENDORS.map(v => `
+    <div class="rfp-card">
+      ${v.rfpUrl
+        ? `<a href="${v.rfpUrl}" target="_blank"><div class="rfp-icon sheet">📑</div><div><div class="rfp-name">${v.name}</div><div class="rfp-meta">RFP Submission</div><div><span class="rfp-badge ready">✓ Available</span></div></div></a>`
+        : `<div class="rfp-icon pending">⏳</div><div><div class="rfp-name">${v.name}</div><div class="rfp-meta">RFP Submission</div><div><span class="rfp-badge pending">⏳ Pending</span></div></div>`
+      }
+    </div>`).join('');
+
+  // Timeline
+  const tl = document.getElementById('timelineEl');
+  tl.innerHTML = `<div style="display:flex;flex-direction:column;gap:0">${TIMELINE.map((item, i) => `
+    <div style="display:flex;gap:16px;align-items:flex-start;padding:12px 0;${i < TIMELINE.length-1 ? 'border-bottom:1px solid var(--gray100)' : ''}">
+      <div style="width:70px;font-size:11px;font-family:var(--mono);color:${item.done||item.today?'var(--black)':'var(--gray500)'};font-weight:${item.today?'600':'400'};white-space:nowrap;padding-top:1px">${item.date}</div>
+      <div style="width:10px;height:10px;border-radius:50%;background:${item.done||item.today?'var(--black)':'var(--gray300)'};flex-shrink:0;margin-top:3px"></div>
+      <div style="font-size:13px;font-weight:${item.today?'600':'400'};color:${item.done||item.today?'var(--black)':'var(--gray500)'}">
+        ${item.label}${item.today?' <span style="font-size:10px;font-family:var(--mono);background:var(--black);color:#fff;padding:1px 7px;border-radius:10px;margin-left:6px;vertical-align:middle">TODAY</span>':''}
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+// ═══════════════════════════════════════════
+// TAB 2 — RATE VENDORS
+// ═══════════════════════════════════════════
+
+// Check URL param for direct reviewer link
+function checkReviewerParam() {
+  const p = new URLSearchParams(window.location.search);
+  const r = p.get('reviewer');
+  if (r && REVIEWERS[r]) {
+    selectReviewer(r);
+    showTab('rate');
+  }
+}
+
+function renderReviewerList() {
+  const el = document.getElementById('reviewerList');
+  el.innerHTML = Object.entries(REVIEWERS).map(([key, r]) => {
+    const done = VENDORS.filter(v => isVendorComplete(key, v.name)).length;
+    return `<button class="vendor-btn" onclick="selectReviewer('${key}')">
+      <div>
+        <div class="vendor-name">${r.name}</div>
+        <div style="font-size:12px;color:var(--gray500);margin-top:2px">${r.role} · ${r.criteria.length} criteria${done > 0 ? ` · ${done}/${VENDORS.length} vendors rated` : ''}</div>
+      </div>
+      <span class="vendor-chev">→</span>
+    </button>`;
+  }).join('');
+}
+
+function selectReviewer(key) {
+  currentReviewer = key;
+  document.getElementById('step-entry').style.display = 'none';
+  document.getElementById('step-vendor').style.display = 'block';
+  document.getElementById('step-rating').style.display = 'none';
+  document.getElementById('step-success').style.display = 'none';
+  renderVendorSelect();
+}
+
+function renderVendorSelect() {
+  const r = REVIEWERS[currentReviewer];
+  const completed = VENDORS.filter(v => isVendorComplete(currentReviewer, v.name));
+  const remaining = VENDORS.filter(v => !isVendorComplete(currentReviewer, v.name));
+
+  document.getElementById('vendorGreeting').innerHTML = `
+    <div class="eyebrow">Step 2 of 3</div>
+    <h1 class="hero">Hey ${r.name} 👋</h1>
+    <p class="sub" style="margin-bottom:${completed.length?'16px':'32px'}">${r.role} · ${r.criteria.length} criteria per vendor · ${remaining.length} vendor${remaining.length!==1?'s':''} remaining</p>
+    ${completed.length ? `<div class="info-box green" style="margin-bottom:24px">✓ Submitted: ${completed.map(v=>v.name).join(', ')}</div>` : ''}
+    ${remaining.length === 0 ? `<div class="info-box blue">🎉 All done! You've rated all 6 vendors. Thank you!</div>` : `<p style="font-size:13px;color:var(--gray500);margin-bottom:16px">Select a vendor to rate:</p>`}
+  `;
+
+  document.getElementById('vendorList').innerHTML = remaining.length === 0 ? '' :
+    remaining.map(v => `<button class="vendor-btn" onclick="selectVendor('${v.name}')">
+      <span class="vendor-name">${v.name}</span>
+      <span class="vendor-chev">→</span>
+    </button>`).join('');
+}
+
+function selectVendor(vendorName) {
+  currentVendor = vendorName;
+  currentRec = getRec(currentReviewer, vendorName);
+  const r = REVIEWERS[currentReviewer];
+  const groups = [...new Set(r.criteria.map(id => CRITERIA[id].group))];
+  currentGroup = groups[0];
+
+  document.getElementById('step-vendor').style.display = 'none';
+  document.getElementById('step-rating').style.display = 'block';
+  renderRatingForm();
+}
+
+function goToVendorSelect() {
+  currentVendor = null;
+  document.getElementById('step-vendor').style.display = 'block';
+  document.getElementById('step-rating').style.display = 'none';
+  document.getElementById('step-success').style.display = 'none';
+  renderVendorSelect();
+}
+
+function renderRatingForm() {
+  const r = REVIEWERS[currentReviewer];
+  const criteria = r.criteria.map(id => ({ id, ...CRITERIA[id] }));
+  const groups = [...new Set(criteria.map(c => c.group))];
+
+  // Header
+  document.getElementById('ratingVendorTitle').textContent = currentVendor;
+  updateProgress();
+
+  // Group tabs
+  renderGroupTabs(criteria, groups);
+
+  // Criteria cards for current group
+  renderCriteriaCards(criteria, groups);
+}
+
+function renderGroupTabs(criteria, groups) {
+  const r = REVIEWERS[currentReviewer];
+  document.getElementById('groupTabs').innerHTML = groups.map(g => {
+    const gCrit = criteria.filter(c => c.group === g);
+    const rated = gCrit.filter(c => getScore(currentReviewer, currentVendor, c.id) > 0).length;
+    return `<button class="group-tab ${g === currentGroup ? 'active' : ''}" onclick="switchGroup('${g}')">
+      ${GROUP_ICONS[g]} ${g}
+      ${rated > 0 ? `<span class="group-badge">${rated}/${gCrit.length}</span>` : ''}
+    </button>`;
+  }).join('');
+}
+
+function switchGroup(g) {
+  const r = REVIEWERS[currentReviewer];
+  const criteria = r.criteria.map(id => ({ id, ...CRITERIA[id] }));
+  const groups = [...new Set(criteria.map(c => c.group))];
+  currentGroup = g;
+  renderGroupTabs(criteria, groups);
+  renderCriteriaCards(criteria, groups);
+}
+
+function renderCriteriaCards(criteria, groups) {
+  const groupCriteria = criteria.filter(c => c.group === currentGroup);
+  const isLast = groups[groups.length - 1] === currentGroup;
+  const curIdx = groups.indexOf(currentGroup);
+
+  const pColors = { "Must Have": "background:#0a0a0a;color:#fff", "Should Have": "background:#f0f0f0;color:#0a0a0a", "Could Have": "background:#f8f8f8;color:#aaa", "—": "background:#f8f8f8;color:#ccc" };
+
+  document.getElementById('criteriaCards').innerHTML = groupCriteria.map(c => {
+    const val = getScore(currentReviewer, currentVendor, c.id);
+    const stars = [1,2,3,4,5].map(i =>
+      `<button class="star-btn ${i <= val ? 'lit' : ''}" 
+        onmouseenter="hoverStar('${c.id}',${i})" 
+        onmouseleave="unhoverStar('${c.id}')"
+        onclick="rateStar('${c.id}',${i})"
+        aria-label="${i} star"
+      >★</button>`
+    ).join('');
+    return `<div class="criterion-card ${val > 0 ? 'rated' : ''}" id="card-${c.id}">
+      <div style="flex:1;min-width:180px">
+        <div class="criterion-label">
+          ${c.label}
+          <span class="priority-badge" style="${pColors[c.priority]}">${c.priority}</span>
+        </div>
+        <div class="criterion-desc">${c.desc}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
+        <div class="star-row" id="stars-${c.id}">${stars}</div>
+        <div class="star-label" id="label-${c.id}">${val > 0 ? STAR_LABELS[val] : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Nav arrows
+  const arrows = document.getElementById('navArrows');
+  arrows.innerHTML = `
+    ${curIdx > 0 ? `<button class="nav-prev" onclick="switchGroup('${groups[curIdx-1]}')">← ${groups[curIdx-1]}</button>` : ''}
+    ${!isLast ? `<button class="nav-next" onclick="switchGroup('${groups[curIdx+1]}')">${groups[curIdx+1]} →</button>` : ''}
+  `;
+
+  // Overall section
+  const overallEl = document.getElementById('overallSection');
+  if (isLast) {
+    overallEl.style.display = 'block';
+    document.getElementById('overallVendorName').textContent = currentVendor;
+    updateRecButtons();
+    const savedComment = getStorage()[`${currentReviewer}:${currentVendor}:_comment`] || '';
+    document.getElementById('commentArea').value = savedComment;
+    document.getElementById('commentArea').oninput = (e) => saveComment(currentReviewer, currentVendor, e.target.value);
+    updateSubmitBtn();
+  } else {
+    overallEl.style.display = 'none';
+  }
+}
+
+function hoverStar(cid, val) {
+  const row = document.getElementById(`stars-${cid}`);
+  if (!row) return;
+  row.querySelectorAll('.star-btn').forEach((btn, i) => {
+    btn.classList.toggle('lit', i < val);
+  });
+  const lbl = document.getElementById(`label-${cid}`);
+  if (lbl) lbl.textContent = STAR_LABELS[val];
+}
+
+function unhoverStar(cid) {
+  const val = getScore(currentReviewer, currentVendor, cid);
+  const row = document.getElementById(`stars-${cid}`);
+  if (!row) return;
+  row.querySelectorAll('.star-btn').forEach((btn, i) => {
+    btn.classList.toggle('lit', i < val);
+  });
+  const lbl = document.getElementById(`label-${cid}`);
+  if (lbl) lbl.textContent = val > 0 ? STAR_LABELS[val] : '';
+}
+
+function rateStar(cid, val) {
+  const current = getScore(currentReviewer, currentVendor, cid);
+  const newVal = current === val ? 0 : val;
+  saveScore(currentReviewer, currentVendor, cid, newVal);
+  const card = document.getElementById(`card-${cid}`);
+  if (card) card.classList.toggle('rated', newVal > 0);
+  const row = document.getElementById(`stars-${cid}`);
+  if (row) row.querySelectorAll('.star-btn').forEach((btn, i) => btn.classList.toggle('lit', i < newVal));
+  const lbl = document.getElementById(`label-${cid}`);
+  if (lbl) lbl.textContent = newVal > 0 ? STAR_LABELS[newVal] : '';
+  updateProgress();
+  updateGroupTabs();
+  updateSubmitBtn();
+}
+
+function updateProgress() {
+  const r = REVIEWERS[currentReviewer];
+  const total = r.criteria.length;
+  const rated = r.criteria.filter(id => getScore(currentReviewer, currentVendor, id) > 0).length;
+  document.getElementById('ratingProgress').textContent = `${rated}/${total} criteria rated`;
+  document.getElementById('progressFill').style.width = `${(rated/total)*100}%`;
+}
+
+function updateGroupTabs() {
+  const r = REVIEWERS[currentReviewer];
+  const criteria = r.criteria.map(id => ({ id, ...CRITERIA[id] }));
+  const groups = [...new Set(criteria.map(c => c.group))];
+  renderGroupTabs(criteria, groups);
+}
+
+function setRec(val) {
+  currentRec = val;
+  saveRec(currentReviewer, currentVendor, val);
+  updateRecButtons();
+  updateSubmitBtn();
+}
+
+function updateRecButtons() {
+  ['Yes','Maybe','No'].forEach(r => {
+    const btn = document.getElementById(`rec${r}`);
+    if (btn) {
+      btn.className = `rec-btn ${currentRec === r ? 'active' : 'inactive'}`;
+    }
+  });
+}
+
+function updateSubmitBtn() {
+  const btn = document.getElementById('submitBtn');
+  if (!btn) return;
+  const r = REVIEWERS[currentReviewer];
+  const hasRatings = r.criteria.some(id => getScore(currentReviewer, currentVendor, id) > 0);
+  btn.disabled = !hasRatings;
+  btn.textContent = `Submit ratings for ${currentVendor}`;
+}
+
+function submitRating() {
+  const comment = document.getElementById('commentArea').value;
+  saveComment(currentReviewer, currentVendor, comment);
+
+  document.getElementById('step-rating').style.display = 'none';
+  document.getElementById('step-success').style.display = 'block';
+  document.getElementById('successVendorName').textContent = currentVendor;
+
+  const remaining = VENDORS.filter(v => !isVendorComplete(currentReviewer, v.name));
+  const nextBtn = document.getElementById('nextVendorBtn');
+  const doneMsg = document.getElementById('allDoneMsg');
+  if (remaining.length > 0) {
+    nextBtn.style.display = 'inline-block';
+    doneMsg.style.display = 'none';
+  } else {
+    nextBtn.style.display = 'none';
+    doneMsg.style.display = 'block';
+  }
+}
+
+// ═══════════════════════════════════════════
+// TAB 3 — SCORECARD
+// ═══════════════════════════════════════════
+
+function computeScores() {
+  const storage = getStorage();
+  const vendorNames = VENDORS.map(v => v.name);
+  const groups = Object.keys(GROUP_WEIGHTS);
+
+  // For each vendor + group + criterion: average across all reviewers who rated it
+  const result = {};
+  vendorNames.forEach(vn => {
+    result[vn] = { groups: {}, total: null, rec: { Yes:0, Maybe:0, No:0 }, recs: [] };
+    groups.forEach(g => {
+      const cids = Object.keys(CRITERIA).filter(id => CRITERIA[id].group === g);
+      let totalWeight = 0, totalScore = 0;
+      cids.forEach(cid => {
+        // Find all reviewers who rated this criterion for this vendor
+        const scores = [];
+        Object.keys(REVIEWERS).forEach(rkey => {
+          if (!REVIEWERS[rkey].criteria.includes(cid)) return;
+          const s = storage[`${rkey}:${vn}:${cid}`];
+          if (s && s > 0) scores.push(s);
+        });
+        if (scores.length > 0) {
+          const avg = scores.reduce((a,b) => a+b, 0) / scores.length;
+          const w = CRITERIA[cid].weight;
+          totalScore += avg * w;
+          totalWeight += w;
+        }
+      });
+      result[vn].groups[g] = totalWeight > 0 ? totalScore / totalWeight : null;
+    });
+
+    // Weighted total across groups
+    let wSum = 0, wScoreSum = 0;
+    groups.forEach(g => {
+      const s = result[vn].groups[g];
+      if (s !== null) { wScoreSum += s * GROUP_WEIGHTS[g]; wSum += GROUP_WEIGHTS[g]; }
+    });
+    result[vn].total = wSum > 0 ? wScoreSum / wSum : null;
+
+    // Recommendations
+    Object.keys(REVIEWERS).forEach(rkey => {
+      const rec = storage[`${rkey}:${vn}:_rec`];
+      if (rec) { result[vn].rec[rec] = (result[vn].rec[rec]||0)+1; result[vn].recs.push(rec); }
+    });
+  });
+  return result;
+}
+
+function scoreClass(s) {
+  if (s === null) return 'none';
+  if (s >= 4) return 'high';
+  if (s >= 3) return 'mid';
+  return 'low';
+}
+
+function fmtScore(s) {
+  if (s === null) return '—';
+  return s.toFixed(2);
+}
+
+function recIcon(rec) {
+  if (!rec || rec.Yes === 0 && rec.Maybe === 0 && rec.No === 0) return '—';
+  if (rec.Yes > rec.Maybe && rec.Yes > rec.No) return '✅';
+  if (rec.No > rec.Yes && rec.No > rec.Maybe) return '❌';
+  return '🤔';
+}
+
+function rankVendors(scores) {
+  const vns = VENDORS.map(v => v.name);
+  const sorted = [...vns].sort((a,b) => {
+    const sa = scores[a].total, sb = scores[b].total;
+    if (sa === null && sb === null) return 0;
+    if (sa === null) return 1;
+    if (sb === null) return -1;
+    return sb - sa;
+  });
+  const ranks = {};
+  vns.forEach(vn => { ranks[vn] = scores[vn].total === null ? '—' : sorted.indexOf(vn)+1; });
+  return ranks;
+}
+
+function renderScorecard() {
+  const scores = computeScores();
+  const ranks = rankVendors(scores);
+  const vendorNames = VENDORS.map(v => v.name);
+  const groups = Object.keys(GROUP_WEIGHTS);
+
+  let html = `<table class="scorecard-table">
+    <thead>
+      <tr>
+        <th style="min-width:180px">Category</th>
+        <th style="min-width:80px">Weight</th>
+        ${vendorNames.map(vn => `<th class="vendor-col">${vn}</th>`).join('')}
+      </tr>
+    </thead>
+    <tbody>`;
+
+  groups.forEach(g => {
+    html += `<tr class="group-row"><td colspan="${2 + vendorNames.length}">${GROUP_ICONS[g]} ${g}</td></tr>`;
+
+    // Criteria rows within group
+    const cids = Object.keys(CRITERIA).filter(id => CRITERIA[id].group === g);
+    cids.forEach(cid => {
+      const c = CRITERIA[cid];
+      html += `<tr>
+        <td style="padding-left:28px">
+          <span style="font-weight:500">${c.label}</span>
+          <span style="font-size:11px;color:var(--gray500);margin-left:6px">${c.desc}</span>
+        </td>
+        <td><span class="weight-badge">${c.weight === 1 ? '×1.0' : c.weight === 0.8 ? '×0.8' : c.weight === 0.9 ? '×0.9' : '×0.5'}</span></td>
+        ${vendorNames.map(vn => {
+          const storage = getStorage();
+          const scores_arr = [];
+          Object.keys(REVIEWERS).forEach(rk => {
+            if (!REVIEWERS[rk].criteria.includes(cid)) return;
+            const s = storage[`${rk}:${vn}:${cid}`];
+            if (s && s > 0) scores_arr.push(s);
+          });
+          if (scores_arr.length === 0) return `<td class="score-cell none">—</td>`;
+          const avg = scores_arr.reduce((a,b)=>a+b,0)/scores_arr.length;
+          const stars = [1,2,3,4,5].map(i => `<span class="star-mini ${i<=Math.round(avg)?'':'empty'}">★</span>`).join('');
+          return `<td class="score-cell ${scoreClass(avg)}"><div style="font-size:11px">${avg.toFixed(1)}</div><div class="stars-display">${stars}</div></td>`;
+        }).join('')}
+      </tr>`;
+    });
+
+    // Group subtotal
+    html += `<tr style="background:var(--gray50)">
+      <td style="font-weight:600;padding-left:28px;font-size:12px">Group average</td>
+      <td style="font-weight:600;font-size:12px;font-family:var(--mono)">${GROUP_WEIGHTS[g]}%</td>
+      ${vendorNames.map(vn => {
+        const s = scores[vn].groups[g];
+        return `<td class="score-cell ${scoreClass(s)}" style="font-weight:700">${fmtScore(s)}</td>`;
+      }).join('')}
+    </tr>`;
+  });
+
+  // Total
+  html += `<tr class="total-row">
+    <td>TOTAL SCORE</td>
+    <td style="font-family:var(--mono);font-size:12px">100%</td>
+    ${vendorNames.map(vn => `<td class="score-cell" style="font-size:15px;font-weight:700">${fmtScore(scores[vn].total)}</td>`).join('')}
+  </tr>`;
+
+  // Rank
+  html += `<tr class="rank-row">
+    <td style="font-weight:600">Rank</td>
+    <td></td>
+    ${vendorNames.map(vn => `<td class="rank-cell">${ranks[vn]}</td>`).join('')}
+  </tr>`;
+
+  // Recommendations
+  html += `<tr class="rank-row">
+    <td style="font-weight:600">Recommendation</td>
+    <td style="font-size:11px;color:var(--gray500)">Reviewers</td>
+    ${vendorNames.map(vn => `<td class="rec-cell">${recIcon(scores[vn].rec)}<div style="font-size:10px;color:var(--gray500);margin-top:2px">${scores[vn].recs.length} vote${scores[vn].recs.length!==1?'s':''}</div></td>`).join('')}
+  </tr>`;
+
+  html += `</tbody></table>`;
+  document.getElementById('scorecardWrap').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════
+function exportCSV() {
+  const scores = computeScores();
+  const vendorNames = VENDORS.map(v => v.name);
+  const rows = [['Category', 'Criterion', 'Weight', ...vendorNames]];
+  const groups = Object.keys(GROUP_WEIGHTS);
+
+  groups.forEach(g => {
+    const cids = Object.keys(CRITERIA).filter(id => CRITERIA[id].group === g);
+    cids.forEach(cid => {
+      const c = CRITERIA[cid];
+      const row = [g, c.label, c.weight];
+      const storage = getStorage();
+      vendorNames.forEach(vn => {
+        const scores_arr = [];
+        Object.keys(REVIEWERS).forEach(rk => {
+          if (!REVIEWERS[rk].criteria.includes(cid)) return;
+          const s = storage[`${rk}:${vn}:${cid}`];
+          if (s && s > 0) scores_arr.push(s);
+        });
+        row.push(scores_arr.length > 0 ? (scores_arr.reduce((a,b)=>a+b,0)/scores_arr.length).toFixed(2) : '');
+      });
+      rows.push(row);
+    });
+    // Group avg row
+    const gRow = [g, 'Group Average', `${GROUP_WEIGHTS[g]}%`];
+    vendorNames.forEach(vn => gRow.push(scores[vn].groups[g] !== null ? scores[vn].groups[g].toFixed(2) : ''));
+    rows.push(gRow);
+  });
+
+  const totalRow = ['TOTAL', '', '100%'];
+  vendorNames.forEach(vn => totalRow.push(scores[vn].total !== null ? scores[vn].total.toFixed(2) : ''));
+  rows.push(totalRow);
+
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'dam_vendor_scorecard.csv'; a.click();
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+renderRFP();
+renderReviewerList();
+checkReviewerParam();
+</script>
+</body>
+</html>
