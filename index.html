@@ -15,7 +15,7 @@
 body { font-family: var(--font); background: var(--g50); color: var(--black); min-height: 100vh; }
 button { font-family: var(--font); cursor: pointer; border: none; }
 textarea, input, select { font-family: var(--font); }
- 
+
 /* ── NAV ── */
 .nav { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1px solid var(--g200); padding: 0 24px; display: flex; align-items: center; height: 52px; gap: 0; overflow-x: auto; }
 .nav-logo { font-size: 13px; font-weight: 600; margin-right: 20px; white-space: nowrap; flex-shrink: 0; }
@@ -23,10 +23,10 @@ textarea, input, select { font-family: var(--font); }
 .nav-tab { height: 52px; padding: 0 14px; background: none; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 500; color: var(--g500); transition: all .15s; white-space: nowrap; flex-shrink: 0; }
 .nav-tab:hover { color: var(--black); }
 .nav-tab.active { color: var(--black); border-bottom-color: var(--black); }
- 
+
 /* ── SCREENS ── */
 .screen { display: none; } .screen.active { display: block; }
- 
+
 /* ── LAYOUTS ── */
 .page { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
 .page-wide { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
@@ -34,7 +34,7 @@ textarea, input, select { font-family: var(--font); }
 h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8px; }
 .sub { font-size: 14px; color: var(--g500); line-height: 1.6; }
 .divider { margin-top: 44px; padding-top: 36px; border-top: 1px solid var(--g200); }
- 
+
 /* ── SETUP BANNER ── */
 .setup-banner { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px; padding: 16px 18px; margin-bottom: 28px; }
 .setup-banner h3 { font-size: 13px; font-weight: 600; color: #92400e; margin-bottom: 6px; }
@@ -45,7 +45,7 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .setup-save { background: #92400e; color: #fff; border-radius: 7px; padding: 8px 14px; font-size: 12px; font-weight: 500; white-space: nowrap; }
 .setup-ok { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #15803d; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
 .setup-ok button { background: none; font-size: 11px; color: #15803d; text-decoration: underline; }
- 
+
 /* ── RFP GRID ── */
 .rfp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-top: 20px; }
 .rfp-card { background: #fff; border: 1px solid var(--g200); border-radius: 12px; padding: 16px; transition: border-color .15s; }
@@ -57,13 +57,13 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .rfp-meta { font-size: 11px; color: var(--g500); margin-top: 1px; }
 .badge { display: inline-flex; align-items: center; font-size: 10px; font-family: var(--mono); padding: 2px 6px; border-radius: 8px; margin-top: 5px; }
 .bg { background: #f0fdf4; color: #15803d; } .br { background: var(--g100); color: var(--g500); }
- 
+
 /* ── TIMELINE ── */
 .tl-row { display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--g100); }
 .tl-date { width: 68px; font-size: 11px; font-family: var(--mono); color: var(--g500); padding-top: 2px; white-space: nowrap; }
 .tl-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
 .tl-label { font-size: 13px; }
- 
+
 /* ── REVIEWER LIST ── */
 .rev-btn { width: 100%; background: #fff; border: 1px solid var(--g200); border-radius: 10px; padding: 13px 16px; text-align: left; display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; transition: all .15s; }
 .rev-btn:hover { background: var(--black); border-color: var(--black); color: #fff; }
@@ -71,12 +71,12 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .rev-name { font-weight: 600; font-size: 14px; }
 .rev-role { font-size: 12px; color: var(--g500); margin-top: 2px; }
 .chev { color: #ccc; font-size: 18px; }
- 
+
 /* ── VENDOR SELECT ── */
 .vendor-btn { width: 100%; background: #fff; border: 1px solid var(--g200); border-radius: 10px; padding: 14px 16px; text-align: left; display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; transition: all .15s; font-size: 15px; font-weight: 500; }
 .vendor-btn:hover { background: var(--black); border-color: var(--black); color: #fff; }
 .vendor-btn:hover .chev { color: rgba(255,255,255,.6) !important; }
- 
+
 /* ── FORM HEADER ── */
 .form-hdr { position: sticky; top: 52px; z-index: 90; background: #fff; border-bottom: 1px solid var(--g200); padding: 10px 24px; }
 .form-hdr-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
@@ -84,7 +84,7 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .prog-fill { height: 100%; background: var(--black); border-radius: 2px; transition: width .3s; }
 .back-btn { background: none; border: 1px solid var(--g200); border-radius: 7px; padding: 5px 11px; font-size: 12px; color: var(--g500); }
 .back-btn:hover { border-color: var(--black); color: var(--black); }
- 
+
 /* ── GROUP TABS ── */
 .gtabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 20px; }
 .gtab { background: #fff; color: var(--g600); border: 1px solid var(--g200); border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 500; transition: all .15s; display: flex; align-items: center; gap: 4px; }
@@ -93,7 +93,7 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .gbadge { border-radius: 10px; padding: 0 5px; font-size: 10px; }
 .gtab.active .gbadge { background: rgba(255,255,255,.22); }
 .gtab:not(.active) .gbadge { background: var(--g100); color: var(--g500); }
- 
+
 /* ── CRITERION CARD ── */
 .ccard { background: #fff; border: 1px solid var(--g200); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; transition: border-color .15s; flex-wrap: wrap; }
 .ccard.rated { border-color: var(--black); }
@@ -104,13 +104,13 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .star { background: none; font-size: 21px; padding: 2px; line-height: 1; transition: color .1s, transform .1s; color: #e0e0e0; }
 .star.on { color: var(--black); transform: scale(1.12); }
 .star-lbl { font-size: 10px; color: var(--g500); font-family: var(--mono); text-align: right; margin-top: 2px; min-height: 13px; }
- 
+
 /* ── NAV ARROWS ── */
 .arrows { display: flex; gap: 7px; margin-bottom: 20px; }
 .arr-prev { flex: 1; background: #fff; border: 1px solid var(--g200); border-radius: 10px; padding: 10px; font-size: 13px; color: var(--g600); }
 .arr-prev:hover { border-color: var(--black); color: var(--black); }
 .arr-next { flex: 1; background: var(--black); border-radius: 10px; padding: 10px; font-size: 13px; color: #fff; font-weight: 500; }
- 
+
 /* ── OVERALL ── */
 .overall-box { background: #fff; border: 1px solid var(--g200); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
 .rec-row { display: flex; gap: 7px; margin-bottom: 16px; }
@@ -119,23 +119,23 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .rec-btn.on  { background: var(--black); border: 1px solid var(--black); color: #fff; }
 .cmt-area { width: 100%; border: 1px solid var(--g200); border-radius: 8px; padding: 9px 11px; font-size: 13px; resize: vertical; outline: none; background: var(--g50); }
 .cmt-area:focus { border-color: var(--black); }
- 
+
 /* ── SUBMIT ── */
 .submit-btn { width: 100%; background: var(--black); color: #fff; border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 600; transition: all .2s; margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .submit-btn:disabled { background: var(--g200); color: var(--g500); cursor: not-allowed; }
 .spinner { width: 15px; height: 15px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
- 
+
 /* ── SUCCESS ── */
 .success-wrap { min-height: calc(100vh - 52px); display: flex; align-items: center; justify-content: center; padding: 24px; }
- 
+
 /* ── INFO BOXES ── */
 .info { padding: 11px 14px; border-radius: 9px; font-size: 13px; margin-bottom: 16px; }
 .info-green  { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
 .info-yellow { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
 .info-blue   { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
 .info-gray   { background: var(--g100); color: var(--g600); border: 1px solid var(--g200); }
- 
+
 /* ── RESULTS: RANKING PODIUM ── */
 .podium { display: flex; gap: 12px; margin-bottom: 32px; align-items: flex-end; flex-wrap: wrap; }
 .podium-card { flex: 1; min-width: 140px; background: #fff; border: 1px solid var(--g200); border-radius: 14px; padding: 20px 16px; text-align: center; position: relative; }
@@ -149,12 +149,12 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .podium-rec { font-size: 18px; margin-bottom: 6px; }
 .podium-votes { font-size: 11px; color: var(--g500); }
 .podium-card.rank-1 .podium-votes { color: rgba(255,255,255,.5); }
- 
+
 /* ── RESULTS: FILTER BAR ── */
 .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
 .filter-bar select { border: 1px solid var(--g200); border-radius: 8px; padding: 6px 10px; font-size: 12px; color: var(--black); background: #fff; outline: none; }
 .filter-bar select:focus { border-color: var(--black); }
- 
+
 /* ── RESULTS: INDIVIDUAL TABLE ── */
 .ind-wrap { overflow-x: auto; margin-bottom: 32px; }
 .ind-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 700px; }
@@ -167,7 +167,7 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .hi { color: #15803d; } .mi { color: #b45309; } .lo { color: #b91c1c; } .na { color: #ccc; font-weight: 400; }
 .stars-xs { display: flex; gap: 1px; justify-content: center; }
 .s1 { font-size: 10px; color: var(--black); } .s0 { font-size: 10px; color: #e8e8e8; }
- 
+
 /* ── RESULTS: AGGREGATED TABLE ── */
 .agg-wrap { overflow-x: auto; }
 .agg-table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -179,14 +179,14 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .agg-table .tot td { background: var(--black) !important; color: #fff; font-weight: 700; border: none; }
 .agg-table .rnk td { background: var(--g50); }
 .wbadge { font-family: var(--mono); font-size: 10px; color: var(--g500); background: var(--g100); padding: 1px 5px; border-radius: 4px; margin-left: 5px; }
- 
+
 /* ── TABS INSIDE RESULTS ── */
 .sub-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--g200); margin-bottom: 28px; }
 .sub-tab { padding: 10px 18px; background: none; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 500; color: var(--g500); transition: all .15s; }
 .sub-tab:hover { color: var(--black); }
 .sub-tab.active { color: var(--black); border-bottom-color: var(--black); }
 .sub-panel { display: none; } .sub-panel.active { display: block; }
- 
+
 @media(max-width:600px){
   .nav-tab { padding: 0 10px; font-size: 12px; }
   .page, .page-wide { padding: 28px 16px; }
@@ -195,13 +195,13 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 </style>
 </head>
 <body>
- 
+
 <nav class="nav">
   <div class="nav-logo">Qonto DAM <span>2026</span></div>
   <button class="nav-tab active"  onclick="showTab('rate')">⭐ Rate Vendors</button>
   <button class="nav-tab"         onclick="showTab('results')">📊 Results</button>
 </nav>
- 
+
 <!-- ══════════ TAB 1 — RATE ══════════ -->
 <div class="screen active" id="tab-rate">
   <div id="s-entry"><div class="page">
@@ -253,26 +253,22 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
     </div></div>
   </div>
 </div>
- 
+
 <!-- ══════════ TAB 3 — RESULTS ══════════ -->
 <div class="screen" id="tab-results">
   <div class="page-wide">
     <div class="eyebrow">Live results</div>
     <h1 class="hero" style="margin-bottom:6px">Results</h1>
-    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-      <button onclick="loadTestData()" style="background:#fffbeb;border:1px solid #fcd34d;border-radius:7px;padding:6px 13px;font-size:12px;font-weight:500;color:#92400e">🧪 Load test data</button>
-      <button onclick="clearTestData()" style="background:#fef2f2;border:1px solid #fecaca;border-radius:7px;padding:6px 13px;font-size:12px;font-weight:500;color:#b91c1c">🗑 Clear all ratings</button>
-    </div>
- 
+
     <!-- Google Sheets setup -->
     <div id="sheetSetup"></div>
- 
+
     <div class="sub-tabs">
       <button class="sub-tab active" onclick="showSubTab('ranking')">🏆 Final Ranking</button>
       <button class="sub-tab" onclick="showSubTab('individual')">👤 Individual Responses</button>
       <button class="sub-tab" onclick="showSubTab('aggregated')">📊 Aggregated Scorecard</button>
     </div>
- 
+
     <!-- RANKING -->
     <div class="sub-panel active" id="panel-ranking">
       <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap">
@@ -282,7 +278,7 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
       <div id="podiumWrap" style="margin-bottom:28px"></div>
       <div id="rankTableWrap"></div>
     </div>
- 
+
     <!-- INDIVIDUAL -->
     <div class="sub-panel" id="panel-individual">
       <div class="filter-bar">
@@ -296,7 +292,7 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
       </div>
       <div class="ind-wrap" id="indWrap"></div>
     </div>
- 
+
     <!-- AGGREGATED -->
     <div class="sub-panel" id="panel-aggregated">
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
@@ -308,11 +304,11 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
     </div>
   </div>
 </div>
- 
+
 <script>
 // ══════════════════ CONFIG — set your Apps Script URL here ══════════════════
 let SHEET_URL = localStorage.getItem('dam_sheet_url') || '';
- 
+
 // ══════════════════ DATA ══════════════════
 const VENDORS = [
   { name:'Canto',              rfpUrl:null },
@@ -322,7 +318,7 @@ const VENDORS = [
   { name:'Smartsheet',         rfpUrl:null },
   { name:'Aprimo',             rfpUrl:null },
 ];
- 
+
 const TIMELINE = [
   { date:'19 May',   label:'RFP Launch',               done:true },
   { date:'25 May',   label:'Q&A Answers shared',        done:true, today:true },
@@ -332,7 +328,7 @@ const TIMELINE = [
   { date:'24 Jun',   label:'Supplier Selection',        done:false },
   { date:'29 Jun',   label:'Project Start',             done:false },
 ];
- 
+
 const CRITERIA = {
   F1: {label:'Search & filters',     desc:'Advanced search, saved views',             pri:'Must Have',  grp:'Functional',  w:1},
   F2: {label:'AI semantic search',   desc:'AI-powered asset discovery',               pri:'Should Have',grp:'Functional',  w:0.8},
@@ -378,12 +374,12 @@ const CRITERIA = {
   C11:{label:'EEA data transfer',    desc:'Sub-processor list + EEA-only transfers',  pri:'Must Have',  grp:'Commercial',  w:1},
   C12:{label:'References quality',   desc:'Strong references in banking / fintech',   pri:'—',          grp:'Commercial',  w:0.9},
 };
- 
+
 const GRP_W = {Functional:30,Design:20,Performance:20,Technical:20,Commercial:10};
 const GRP_I = {Functional:'◈',Design:'◇',Performance:'◉',Technical:'◎',Commercial:'◫'};
 const SL    = ['','Poor','Fair','Good','Great','Excellent'];
 const PRI_S = {'Must Have':'background:#0a0a0a;color:#fff','Should Have':'background:#f0f0f0;color:#0a0a0a','Could Have':'background:#f8f8f8;color:#aaa','—':'background:#f8f8f8;color:#ccc'};
- 
+
 const REVIEWERS = {
   hortense:{name:'Hortense',      role:'Growth Programs Manager',           criteria:['F1','F2','F3','F4','F6','D4','D6','P1','P3','P4','P5','C1','C12']},
   julie:   {name:'Julie R',       role:'Brand, Comms & Creativity Director',criteria:['F1','F2','F3','F4','F9','F10','F11','T9']},
@@ -397,11 +393,11 @@ const REVIEWERS = {
   aymeric: {name:'Aymeric',       role:'CTO',                               criteria:['T1','T2','T3','T4','T6','T7','T8','C3','C6','C9','C11']},
   polina:  {name:'Polina',        role:'Procurement / Legal',               criteria:['T6','T7','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12']},
 };
- 
+
 // ══════════════════ LOCAL STATE ══════════════════
 let curReviewer=null, curVendor=null, curGroup=null, curRec=null;
 let allRows = []; // cached from sheet
- 
+
 function ls(){ try{return JSON.parse(localStorage.getItem('dam_v3')||'{}');}catch(e){return{};} }
 function lsSave(d){ localStorage.setItem('dam_v3',JSON.stringify(d)); }
 function getScore(r,v,c){ return ls()[`${r}:${v}:${c}`]||0; }
@@ -411,7 +407,7 @@ function setRecLS(r,v,x){ const d=ls(); d[`${r}:${v}:_rec`]=x; lsSave(d); }
 function getCmt(r,v){ return ls()[`${r}:${v}:_cmt`]||''; }
 function setCmtLS(r,v,x){ const d=ls(); d[`${r}:${v}:_cmt`]=x; lsSave(d); }
 function isDone(r,v){ return !!ls()[`${r}:${v}:_rec`]; }
- 
+
 // ══════════════════ GOOGLE SHEETS ══════════════════
 function renderSheetSetup() {
   const el = document.getElementById('sheetSetup');
@@ -432,7 +428,7 @@ function renderSheetSetup() {
     </div>`;
   }
 }
- 
+
 function saveSheetUrl() {
   const v = document.getElementById('sheetInput').value.trim();
   if (!v) return;
@@ -441,25 +437,25 @@ function saveSheetUrl() {
   renderSheetSetup();
   loadResults();
 }
- 
+
 function clearSheetUrl() {
   SHEET_URL = '';
   localStorage.removeItem('dam_sheet_url');
   renderSheetSetup();
 }
- 
+
 function showSetupGuide() {
   alert(`Google Apps Script setup (2 min):
- 
+
 1. Go to script.google.com → New project
 2. Paste the Apps Script code (see README in GitHub repo)
 3. Click Deploy → New deployment → Web App
 4. Execute as: Me · Who has access: Anyone
 5. Copy the Web App URL and paste it here
- 
+
 The script handles both POST (save ratings) and GET (read all ratings).`);
 }
- 
+
 // Post a submission to the sheet
 async function postToSheet(payload) {
   if (!SHEET_URL) return false;
@@ -473,7 +469,7 @@ async function postToSheet(payload) {
     return true;
   } catch(e) { console.warn('Sheet POST error', e); return false; }
 }
- 
+
 // Read all rows from the sheet
 async function fetchFromSheet() {
   if (!SHEET_URL) return null;
@@ -483,7 +479,7 @@ async function fetchFromSheet() {
     return Array.isArray(data) ? data : null;
   } catch(e) { console.warn('Sheet GET error', e); return null; }
 }
- 
+
 // ══════════════════ NAV ══════════════════
 function showTab(t) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -493,14 +489,14 @@ function showTab(t) {
   document.querySelectorAll('.nav-tab')[idx].classList.add('active');
   if(t==='results'){ renderSheetSetup(); loadResults(); }
 }
- 
+
 function showSubTab(name) {
   document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   event.target.classList.add('active');
 }
- 
+
 // ══════════════════ TAB 1 ══════════════════
 function renderRFP() {
   document.getElementById('rfpGrid').innerHTML = VENDORS.map(v=>`
@@ -518,13 +514,13 @@ function renderRFP() {
       </div>
     </div>`).join('');
 }
- 
+
 // ══════════════════ TAB 2 — RATING ══════════════════
 function checkParam() {
   const r = new URLSearchParams(location.search).get('reviewer');
   if(r && REVIEWERS[r]){ curReviewer=r; showTab('rate'); goVendors(); }
 }
- 
+
 function renderRevList() {
   document.getElementById('revList').innerHTML = Object.entries(REVIEWERS).map(([k,r])=>{
     const done = VENDORS.filter(v=>isDone(k,v.name)).length;
@@ -533,9 +529,9 @@ function renderRevList() {
       <span class="chev">→</span></button>`;
   }).join('');
 }
- 
+
 function pickReviewer(k){ curReviewer=k; hide('s-entry'); goVendors(); }
- 
+
 function goVendors() {
   curVendor=null;
   show('s-vendor'); hide('s-entry'); hide('s-rating'); hide('s-success');
@@ -552,20 +548,20 @@ function goVendors() {
     <button class="vendor-btn" onclick="pickVendor('${v.name}')">
       <span>${v.name}</span><span class="chev">→</span></button>`).join('');
 }
- 
+
 function pickVendor(vn) {
   curVendor=vn; curRec=getRec(curReviewer,vn);
   curGroup=getGroups()[0];
   show('s-rating'); hide('s-vendor'); renderForm();
 }
- 
+
 function getGroups(){ return [...new Set(REVIEWERS[curReviewer].criteria.map(id=>CRITERIA[id].grp))]; }
- 
+
 function renderForm() {
   document.getElementById('fhVendor').textContent=curVendor;
   updateProg(); renderGTabs(); renderCards();
 }
- 
+
 function renderGTabs() {
   const grps=getGroups();
   document.getElementById('gTabs').innerHTML=grps.map(g=>{
@@ -576,9 +572,9 @@ function renderGTabs() {
     </button>`;
   }).join('');
 }
- 
+
 function switchGrp(g){ curGroup=g; renderGTabs(); renderCards(); }
- 
+
 function renderCards() {
   const grps=getGroups(), isLast=curGroup===grps[grps.length-1], curIdx=grps.indexOf(curGroup);
   const cids=REVIEWERS[curReviewer].criteria.filter(id=>CRITERIA[id].grp===curGroup);
@@ -605,7 +601,7 @@ function renderCards() {
     updateSubBtn();
   } else { ov.style.display='none'; }
 }
- 
+
 function hov(id,v){
   const row=document.getElementById('sr-'+id); if(!row)return;
   row.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<v));
@@ -640,7 +636,7 @@ function updateSubBtn(){
   b.disabled=!hasAny;
   document.getElementById('subLabel').textContent=`Submit ratings for ${curVendor}`;
 }
- 
+
 async function submitRating() {
   const btn=document.getElementById('subBtn'); btn.disabled=true;
   document.getElementById('subSpinner').style.display='block';
@@ -659,9 +655,9 @@ async function submitRating() {
   document.getElementById('nextVBtn').style.display=rem.length>0?'inline-block':'none';
   document.getElementById('allDoneMsg').style.display=rem.length===0?'block':'none';
 }
- 
+
 // ══════════════════ TAB 3 — RESULTS ══════════════════
- 
+
 async function loadResults() {
   // Try sheet first, fall back to localStorage
   let rows = await fetchFromSheet();
@@ -691,7 +687,7 @@ async function loadResults() {
   renderIndividual();
   renderAggregated();
 }
- 
+
 // ── RANKING ──
 function computeVendorScore(vendorName, rows) {
   const vRows = rows.filter(r=>r.vendor===vendorName);
@@ -716,11 +712,11 @@ function computeVendorScore(vendorName, rows) {
   const recCount = {Yes:recs.filter(r=>r==='Yes').length, Maybe:recs.filter(r=>r==='Maybe').length, No:recs.filter(r=>r==='No').length};
   return { total, groupScores, recs, recCount, responses: vRows.length };
 }
- 
+
 function recIcon(rc){ if(!rc||rc.Yes+rc.Maybe+rc.No===0)return'—'; if(rc.Yes>rc.Maybe&&rc.Yes>rc.No)return'✅'; if(rc.No>rc.Yes&&rc.No>rc.Maybe)return'❌'; return'🤔'; }
 function scCls(s){ if(s===null)return'na'; if(s>=4)return'hi'; if(s>=3)return'mi'; return'lo'; }
 function fmt(s){ return s===null?'—':s.toFixed(2); }
- 
+
 function renderRanking() {
   const vns = VENDORS.map(v=>v.name);
   const scores = {};
@@ -731,7 +727,7 @@ function renderRanking() {
   });
   const ranked = sorted.filter(vn=>scores[vn].total!==null);
   const unrated = sorted.filter(vn=>scores[vn].total===null);
- 
+
   // Podium (top 3)
   document.getElementById('podiumWrap').innerHTML = ranked.slice(0,6).map((vn,i)=>{
     const s=scores[vn];
@@ -743,7 +739,7 @@ function renderRanking() {
       <div class="podium-votes">${s.responses} response${s.responses!==1?'s':''}</div>
     </div>`;
   }).join('')+(unrated.length?`<div class="podium-card" style="flex:2;min-width:200px;display:flex;align-items:center;justify-content:center;color:var(--g500);font-size:13px">${unrated.join(', ')} — no ratings yet</div>`:'');
- 
+
   // Summary table
   const grps = Object.keys(GRP_W);
   let h=`<div class="agg-wrap"><table class="agg-table">
@@ -770,25 +766,25 @@ function renderRanking() {
   h+=`</tbody></table></div>`;
   document.getElementById('rankTableWrap').innerHTML = h;
 }
- 
+
 // ── INDIVIDUAL RESPONSES ──
 function renderIndividual() {
   const revFilter = document.getElementById('filterReviewer')?.value || '';
   const vnFilter  = document.getElementById('filterVendor')?.value || '';
   let rows = allRows.filter(r => (!revFilter||r.reviewer===revFilter) && (!vnFilter||r.vendor===vnFilter));
- 
+
   if (!rows.length) {
     document.getElementById('indWrap').innerHTML = `<div class="info info-gray">No responses yet${revFilter||vnFilter?' for this filter':''}.</div>`;
     return;
   }
- 
+
   // Sort by reviewer then vendor
   rows = [...rows].sort((a,b)=>a.reviewer.localeCompare(b.reviewer)||a.vendor.localeCompare(b.vendor));
- 
+
   // Get all criteria present in the filtered rows
   const cidsPresent = [...new Set(rows.flatMap(r=>Object.keys(r.scores||{})))];
   const grpsPresent = [...new Set(cidsPresent.map(id=>CRITERIA[id]?.grp).filter(Boolean))];
- 
+
   let h = `<table class="ind-table">
     <thead><tr>
       <th>Reviewer</th><th>Role</th><th>Vendor</th>
@@ -797,7 +793,7 @@ function renderIndividual() {
       ).join('')}
       <th class="c">Rec.</th><th style="min-width:160px">Comment</th>
     </tr></thead><tbody>`;
- 
+
   // Group header rows per group
   let lastGroup = null;
   rows.forEach(row => {
@@ -819,7 +815,7 @@ function renderIndividual() {
   h+=`</tbody></table>`;
   document.getElementById('indWrap').innerHTML = h;
 }
- 
+
 // ── AGGREGATED SCORECARD ──
 function renderAggregated() {
   const vns = VENDORS.map(v=>v.name);
@@ -827,13 +823,13 @@ function renderAggregated() {
   const grps = Object.keys(GRP_W);
   const sorted=[...vns].sort((a,b)=>{const sa=scores[a].total,sb=scores[b].total;if(sa===null&&sb===null)return 0;if(sa===null)return 1;if(sb===null)return-1;return sb-sa;});
   const ranks={}; sorted.forEach((vn,i)=>{ ranks[vn]=scores[vn].total===null?'—':i+1; });
- 
+
   let h=`<table class="agg-table">
     <thead><tr>
       <th style="min-width:180px">Criterion</th><th style="min-width:60px">Weight</th>
       ${vns.map(vn=>`<th class="vc">${vn}</th>`).join('')}
     </tr></thead><tbody>`;
- 
+
   grps.forEach(g=>{
     h+=`<tr class="gr"><td colspan="${2+vns.length}">${GRP_I[g]} ${g} · ${GRP_W[g]}% of total</td></tr>`;
     const cids=Object.keys(CRITERIA).filter(id=>CRITERIA[id].grp===g);
@@ -856,7 +852,7 @@ function renderAggregated() {
       ${vns.map(vn=>`<td class="sc-cell ${scCls(scores[vn].groupScores[g])}" style="font-weight:700">${fmt(scores[vn].groupScores[g])}</td>`).join('')}
     </tr>`;
   });
- 
+
   h+=`<tr class="tot"><td>TOTAL SCORE</td><td style="font-family:var(--mono);font-size:11px">100%</td>
     ${vns.map(vn=>`<td class="sc-cell" style="font-size:14px">${fmt(scores[vn].total)}</td>`).join('')}</tr>`;
   h+=`<tr class="rnk"><td style="font-weight:600">Rank</td><td></td>
@@ -866,7 +862,7 @@ function renderAggregated() {
   h+=`</tbody></table>`;
   document.getElementById('aggWrap').innerHTML=h;
 }
- 
+
 // ── EXPORT CSV ──
 function exportCSV() {
   const vns=VENDORS.map(v=>v.name);
@@ -894,79 +890,16 @@ function exportCSV() {
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='dam_results.csv'; a.click();
 }
- 
+
 // ══════════════════ UTILS ══════════════════
 function show(id){ document.getElementById(id).style.display='block'; }
 function hide(id){ document.getElementById(id).style.display='none'; }
- 
-// ══════════════════ TEST DATA ══════════════════
-function loadTestData() {
-  if (!confirm('This will pre-fill fake ratings from all 11 reviewers across all 6 vendors so you can preview the Results tab. Continue?')) return;
- 
-  const testScores = {
-    hortense: { Canto:{F1:4,F2:3,F3:5,F4:4,F6:4,D4:3,D6:4,P1:2,P3:2,P4:3,P5:3,C1:4,C12:4}, Cloudinary:{F1:3,F2:4,F3:3,F4:3,F6:3,D4:5,D6:3,P1:3,P3:3,P4:4,P5:3,C1:3,C12:3}, Bynder:{F1:5,F2:4,F3:5,F4:5,F6:5,D4:4,D6:5,P1:3,P3:3,P4:4,P5:4,C1:3,C12:4}, 'Qontent (internal)':{F1:3,F2:2,F3:3,F4:3,F6:3,D4:2,D6:2,P1:2,P3:2,P4:2,P5:3,C1:5,C12:2}, Smartsheet:{F1:2,F2:2,F3:2,F4:2,F6:2,D4:2,D6:2,P1:1,P3:1,P4:2,P5:2,C1:3,C12:2}, Aprimo:{F1:4,F2:3,F3:4,F4:4,F6:4,D4:3,D6:3,P1:4,P3:4,P4:4,P5:4,C1:3,C12:4} },
-    julie:    { Canto:{F1:4,F2:3,F3:4,F4:4,F9:3,F10:3,F11:4,T9:3}, Cloudinary:{F1:3,F2:3,F3:3,F4:3,F9:2,F10:2,F11:3,T9:2}, Bynder:{F1:5,F2:4,F3:5,F4:5,F9:4,F10:4,F11:5,T9:4}, 'Qontent (internal)':{F1:2,F2:1,F3:2,F4:2,F9:1,F10:2,F11:2,T9:1}, Smartsheet:{F1:2,F2:2,F3:2,F4:2,F9:1,F10:2,F11:2,T9:1}, Aprimo:{F1:4,F2:3,F3:4,F4:4,F9:3,F10:3,F11:4,T9:3} },
-    didier:   { Canto:{F1:4,F2:3,F5:4,F8:4,F11:4,D1:4,D2:3,D3:2}, Cloudinary:{F1:3,F2:4,F5:3,F8:3,F11:3,D1:5,D2:3,D3:2}, Bynder:{F1:5,F2:4,F5:5,F8:5,F11:5,D1:5,D2:4,D3:3}, 'Qontent (internal)':{F1:2,F2:1,F5:2,F8:2,F11:2,D1:2,D2:1,D3:1}, Smartsheet:{F1:2,F2:1,F5:2,F8:2,F11:2,D1:2,D2:1,D3:1}, Aprimo:{F1:4,F2:3,F5:4,F8:4,F11:4,D1:4,D2:3,D3:2} },
-    carla:    { Canto:{F1:4,F2:3,F3:4,F4:4,F5:4,F6:4,F7:3,F8:4,F9:3,F10:3,F11:4,D1:4,D2:3,D3:2,T9:3}, Cloudinary:{F1:3,F2:3,F3:3,F4:3,F5:3,F6:3,F7:3,F8:3,F9:2,F10:2,F11:3,D1:5,D2:3,D3:2,T9:2}, Bynder:{F1:5,F2:4,F3:5,F4:5,F5:5,F6:5,F7:4,F8:5,F9:4,F10:4,F11:5,D1:5,D2:5,D3:4,T9:4}, 'Qontent (internal)':{F1:3,F2:2,F3:3,F4:3,F5:3,F6:3,F7:2,F8:2,F9:1,F10:2,F11:3,D1:2,D2:1,D3:1,T9:1}, Smartsheet:{F1:2,F2:1,F3:2,F4:2,F5:2,F6:2,F7:1,F8:2,F9:1,F10:1,F11:2,D1:2,D2:1,D3:1,T9:1}, Aprimo:{F1:4,F2:3,F3:4,F4:4,F5:4,F6:4,F7:3,F8:4,F9:3,F10:3,F11:4,D1:4,D2:3,D3:2,T9:3} },
-    soline:   { Canto:{F1:4,F3:4,F4:4,F5:4,F6:4,F7:3,F8:4,F10:3,F11:4,D1:4,D2:3,D4:3,D5:3,D6:4}, Cloudinary:{F1:3,F3:3,F4:3,F5:3,F6:3,F7:3,F8:3,F10:2,F11:3,D1:5,D2:3,D4:5,D5:4,D6:3}, Bynder:{F1:5,F3:5,F4:5,F5:5,F6:5,F7:4,F8:5,F10:4,F11:5,D1:5,D2:5,D4:4,D5:4,D6:5}, 'Qontent (internal)':{F1:3,F3:3,F4:3,F5:2,F6:2,F7:1,F8:2,F10:2,F11:3,D1:2,D2:1,D4:2,D5:1,D6:2}, Smartsheet:{F1:2,F3:2,F4:2,F5:1,F6:1,F7:1,F8:2,F10:1,F11:2,D1:2,D2:1,D4:2,D5:2,D6:2}, Aprimo:{F1:4,F3:4,F4:4,F5:4,F6:4,F7:3,F8:4,F10:3,F11:4,D1:4,D2:3,D4:3,D5:3,D6:4} },
-    alex:     { Canto:{P1:3,P2:2,P4:3,P5:3,T1:3,T2:3,T5:2}, Cloudinary:{P1:3,P2:3,P4:3,P5:3,T1:5,T2:4,T5:3}, Bynder:{P1:3,P2:3,P4:4,P5:4,T1:4,T2:4,T5:3}, 'Qontent (internal)':{P1:2,P2:2,P4:2,P5:2,T1:3,T2:3,T5:2}, Smartsheet:{P1:1,P2:1,P4:2,P5:2,T1:2,T2:2,T5:1}, Aprimo:{P1:4,P2:4,P4:4,P5:4,T1:3,T2:3,T5:2} },
-    vincent:  { Canto:{P1:3,P2:2,P3:2,P4:3}, Cloudinary:{P1:3,P2:3,P3:3,P4:3}, Bynder:{P1:4,P2:3,P3:3,P4:4}, 'Qontent (internal)':{P1:2,P2:2,P3:2,P4:2}, Smartsheet:{P1:1,P2:1,P3:1,P4:2}, Aprimo:{P1:4,P2:4,P3:4,P4:4} },
-    teresa:   { Canto:{P1:3,P2:2,P3:2,P4:3,P5:3}, Cloudinary:{P1:3,P2:3,P3:3,P4:3,P5:3}, Bynder:{P1:4,P2:3,P3:3,P4:4,P5:4}, 'Qontent (internal)':{P1:2,P2:1,P3:1,P4:2,P5:2}, Smartsheet:{P1:1,P2:1,P3:1,P4:1,P5:1}, Aprimo:{P1:5,P2:5,P3:4,P4:4,P5:4} },
-    seb:      { Canto:{T1:3,T2:3,T3:2,T4:3,T5:2,T6:4,T8:4,C6:3}, Cloudinary:{T1:5,T2:4,T3:4,T4:5,T5:3,T6:4,T8:4,C6:4}, Bynder:{T1:4,T2:4,T3:3,T4:4,T5:3,T6:4,T8:5,C6:4}, 'Qontent (internal)':{T1:4,T2:3,T3:4,T4:3,T5:4,T6:5,T8:4,C6:3}, Smartsheet:{T1:2,T2:2,T3:2,T4:2,T5:2,T6:3,T8:3,C6:2}, Aprimo:{T1:3,T2:3,T3:3,T4:3,T5:2,T6:4,T8:4,C6:3} },
-    aymeric:  { Canto:{T1:3,T2:3,T3:2,T4:3,T6:4,T7:4,T8:4,C3:3,C6:3,C9:3,C11:4}, Cloudinary:{T1:5,T2:4,T3:5,T4:5,T6:4,T7:4,T8:4,C3:3,C6:4,C9:3,C11:4}, Bynder:{T1:4,T2:4,T3:4,T4:4,T6:4,T7:5,T8:5,C3:4,C6:4,C9:4,C11:4}, 'Qontent (internal)':{T1:4,T2:3,T3:4,T4:3,T6:5,T7:4,T8:4,C3:3,C6:3,C9:4,C11:5}, Smartsheet:{T1:2,T2:2,T3:1,T4:2,T6:3,T7:3,T8:3,C3:2,C6:2,C9:2,C11:3}, Aprimo:{T1:3,T2:3,T3:3,T4:3,T6:4,T7:4,T8:4,C3:3,C6:3,C9:3,C11:4} },
-    polina:   { Canto:{T6:4,T7:4,C1:4,C2:4,C3:3,C4:3,C5:3,C6:3,C7:4,C8:4,C9:3,C10:3,C11:4,C12:4}, Cloudinary:{T6:4,T7:4,C1:3,C2:4,C3:3,C4:3,C5:3,C6:4,C7:4,C8:3,C9:3,C10:3,C11:4,C12:3}, Bynder:{T6:4,T7:5,C1:3,C2:4,C3:4,C4:4,C5:4,C6:4,C7:4,C8:4,C9:4,C10:4,C11:4,C12:4}, 'Qontent (internal)':{T6:5,T7:4,C1:5,C2:5,C3:3,C4:3,C5:3,C6:3,C7:5,C8:5,C9:4,C10:3,C11:5,C12:2}, Smartsheet:{T6:3,T7:3,C1:2,C2:3,C3:2,C4:2,C5:2,C6:2,C7:3,C8:2,C9:2,C10:2,C11:3,C12:2}, Aprimo:{T6:4,T7:4,C1:3,C2:4,C3:4,C4:4,C5:4,C6:4,C7:4,C8:4,C9:4,C10:3,C11:4,C12:4} }
-  };
- 
-  const testRecs = {
-    hortense: { Canto:'Yes', Cloudinary:'Maybe', Bynder:'Yes', 'Qontent (internal)':'Maybe', Smartsheet:'No', Aprimo:'Yes' },
-    julie:    { Canto:'Yes', Cloudinary:'Maybe', Bynder:'Yes', 'Qontent (internal)':'No',    Smartsheet:'No', Aprimo:'Yes' },
-    didier:   { Canto:'Yes', Cloudinary:'Maybe', Bynder:'Yes', 'Qontent (internal)':'No',    Smartsheet:'No', Aprimo:'Yes' },
-    carla:    { Canto:'Yes', Cloudinary:'Maybe', Bynder:'Yes', 'Qontent (internal)':'Maybe', Smartsheet:'No', Aprimo:'Yes' },
-    soline:   { Canto:'Yes', Cloudinary:'Maybe', Bynder:'Yes', 'Qontent (internal)':'Maybe', Smartsheet:'No', Aprimo:'Yes' },
-    alex:     { Canto:'Maybe', Cloudinary:'Yes', Bynder:'Yes', 'Qontent (internal)':'Maybe', Smartsheet:'No', Aprimo:'Yes' },
-    vincent:  { Canto:'Maybe', Cloudinary:'Maybe', Bynder:'Yes', 'Qontent (internal)':'No',  Smartsheet:'No', Aprimo:'Yes' },
-    teresa:   { Canto:'Maybe', Cloudinary:'Maybe', Bynder:'Yes', 'Qontent (internal)':'No',  Smartsheet:'No', Aprimo:'Yes' },
-    seb:      { Canto:'Maybe', Cloudinary:'Yes', Bynder:'Yes', 'Qontent (internal)':'Maybe', Smartsheet:'No', Aprimo:'Maybe' },
-    aymeric:  { Canto:'Maybe', Cloudinary:'Yes', Bynder:'Yes', 'Qontent (internal)':'Maybe', Smartsheet:'No', Aprimo:'Maybe' },
-    polina:   { Canto:'Yes', Cloudinary:'Maybe', Bynder:'Yes', 'Qontent (internal)':'Maybe', Smartsheet:'No', Aprimo:'Yes' },
-  };
- 
-  const testComments = {
-    Bynder: 'Strong across the board. Best Figma integration we tested.',
-    Canto: 'Good UX, solid DAM fundamentals. Performance data integration weak.',
-    Cloudinary: 'Best technical API by far. Limited brand governance features.',
-    Aprimo: 'Strong on performance data. Heavier to implement.',
-    'Qontent (internal)': 'No external contract needed but product maturity is a concern.',
-    Smartsheet: 'Not built for DAM use cases. Would need heavy customisation.',
-  };
- 
-  const d = ls();
-  Object.entries(testScores).forEach(([rk, vendors]) => {
-    Object.entries(vendors).forEach(([vn, scores]) => {
-      Object.entries(scores).forEach(([cid, s]) => { d[`${rk}:${vn}:${cid}`] = s; });
-      d[`${rk}:${vn}:_rec`] = testRecs[rk][vn];
-      d[`${rk}:${vn}:_cmt`] = testComments[vn] || '';
-    });
-  });
-  lsSave(d);
-  alert('✅ Test data loaded! Go to the Results tab to preview.');
-}
- 
-function clearTestData() {
-  if (!confirm('Delete ALL ratings from this browser (test data and any real submissions)? This cannot be undone.')) return;
-  localStorage.removeItem('dam_v3');
-  allRows = [];
-  renderRanking();
-  renderIndividual();
-  renderAggregated();
-  renderRevList();
-  alert('✅ All ratings cleared.');
-}
- 
+
 // ══════════════════ INIT ══════════════════
 renderRevList();
 checkParam();
 </script>
 </body>
 </html>
+
  
