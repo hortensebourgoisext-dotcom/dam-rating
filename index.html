@@ -264,9 +264,9 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
     <div id="sheetSetup"></div>
 
     <div class="sub-tabs">
-      <button class="sub-tab active" onclick="showSubTab('ranking')">🏆 Final Ranking</button>
-      <button class="sub-tab" onclick="showSubTab('individual')">👤 Individual Responses</button>
-      <button class="sub-tab" onclick="showSubTab('aggregated')">📊 Aggregated Scorecard</button>
+      <button class="sub-tab active" onclick="showSubTab('ranking', this)">🏆 Final Ranking</button>
+      <button class="sub-tab" onclick="showSubTab('individual', this)">👤 Individual Responses</button>
+      <button class="sub-tab" onclick="showSubTab('aggregated', this)">📊 Aggregated Scorecard</button>
     </div>
 
     <!-- RANKING -->
@@ -289,6 +289,7 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
           <option value="">All vendors</option>
         </select>
         <button onclick="loadResults()" style="background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:500">↻ Refresh</button>
+        <button onclick="exportIndividualCSV()" style="background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:500">⬇ Download CSV</button>
       </div>
       <div class="ind-wrap" id="indWrap"></div>
     </div>
@@ -297,7 +298,7 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
     <div class="sub-panel" id="panel-aggregated">
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
         <button onclick="loadResults()" style="background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:6px 13px;font-size:12px;font-weight:500">↻ Refresh</button>
-        <button onclick="exportCSV()" style="background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:6px 13px;font-size:12px;font-weight:500">⬇ Export CSV</button>
+        <button onclick="exportAggregatedCSV()" style="background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:6px 13px;font-size:12px;font-weight:500">⬇ Download CSV</button>
         <span style="font-size:12px;color:var(--g500)"><span style="color:#15803d">●</span> 4–5 &nbsp;<span style="color:#b45309">●</span> 3–4 &nbsp;<span style="color:#b91c1c">●</span> 1–3</span>
       </div>
       <div class="agg-wrap" id="aggWrap"></div>
@@ -485,16 +486,16 @@ function showTab(t) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
-  const idx=['rate','results'].indexOf(t);
-  document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+  // activate the button that called this by matching its onclick text
+  document.querySelectorAll('.nav-tab').forEach(b=>{ if(b.getAttribute('onclick')===`showTab('${t}')`) b.classList.add('active'); });
   if(t==='results'){ renderSheetSetup(); loadResults(); }
 }
 
-function showSubTab(name) {
+function showSubTab(name, btn) {
   document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
-  event.target.classList.add('active');
+  if(btn) btn.classList.add('active');
 }
 
 // ══════════════════ TAB 1 ══════════════════
@@ -781,18 +782,30 @@ function renderIndividual() {
   // Sort by reviewer then vendor
   rows = [...rows].sort((a,b)=>a.reviewer.localeCompare(b.reviewer)||a.vendor.localeCompare(b.vendor));
 
-  // Get all criteria present in the filtered rows
-  const cidsPresent = [...new Set(rows.flatMap(r=>Object.keys(r.scores||{})))];
+  // Sort criteria by group order then by id
+  const groupOrder = Object.keys(GRP_W);
+  const cidsPresent = [...new Set(rows.flatMap(r=>Object.keys(r.scores||{})))]
+    .filter(id=>CRITERIA[id])
+    .sort((a,b)=>{
+      const ga=groupOrder.indexOf(CRITERIA[a].grp), gb=groupOrder.indexOf(CRITERIA[b].grp);
+      return ga!==gb ? ga-gb : a.localeCompare(b);
+    });
   const grpsPresent = [...new Set(cidsPresent.map(id=>CRITERIA[id]?.grp).filter(Boolean))];
 
   let h = `<table class="ind-table">
-    <thead><tr>
-      <th>Reviewer</th><th>Role</th><th>Vendor</th>
-      ${grpsPresent.map(g=>
-        cidsPresent.filter(id=>CRITERIA[id]?.grp===g).map(id=>`<th class="c" title="${CRITERIA[id].desc}">${id}</th>`).join('')
-      ).join('')}
-      <th class="c">Rec.</th><th style="min-width:160px">Comment</th>
-    </tr></thead><tbody>`;
+    <thead>
+      <tr>
+        <th rowspan="2">Reviewer</th><th rowspan="2">Role</th><th rowspan="2">Vendor</th>
+        ${grpsPresent.map(g=>{
+          const gc=cidsPresent.filter(id=>CRITERIA[id]?.grp===g);
+          return`<th colspan="${gc.length}" style="text-align:center;border-bottom:1px solid rgba(255,255,255,0.2)">${GRP_I[g]} ${g}</th>`;
+        }).join('')}
+        <th rowspan="2" class="c">Rec.</th><th rowspan="2" style="min-width:160px">Comment</th>
+      </tr>
+      <tr>
+        ${cidsPresent.map(id=>`<th class="c" title="${CRITERIA[id].desc}" style="font-size:10px;font-weight:400;white-space:nowrap;padding:4px 8px">${CRITERIA[id].label}</th>`).join('')}
+      </tr>
+    </thead><tbody>`;
 
   // Group header rows per group
   let lastGroup = null;
@@ -863,32 +876,65 @@ function renderAggregated() {
   document.getElementById('aggWrap').innerHTML=h;
 }
 
-// ── EXPORT CSV ──
-function exportCSV() {
-  const vns=VENDORS.map(v=>v.name);
-  const scores={}; vns.forEach(vn=>{scores[vn]=computeVendorScore(vn,allRows);});
-  const rows=[['Category','Criterion','Weight',...vns]];
-  Object.keys(GRP_W).forEach(g=>{
-    Object.keys(CRITERIA).filter(id=>CRITERIA[id].grp===g).forEach(cid=>{
-      const c=CRITERIA[cid], row=[g,c.label,c.w];
-      vns.forEach(vn=>{
-        const sc=allRows.filter(r=>r.vendor===vn).flatMap(r=>r.scores&&r.scores[cid]?[r.scores[cid]]:[]);
-        row.push(sc.length?(sc.reduce((a,b)=>a+b,0)/sc.length).toFixed(2):'');
+// ── EXPORT: INDIVIDUAL RESPONSES ──
+function exportIndividualCSV() {
+  const revFilter = document.getElementById('filterReviewer')?.value || '';
+  const vnFilter  = document.getElementById('filterVendor')?.value || '';
+  let rows = allRows.filter(r => (!revFilter||r.reviewer===revFilter) && (!vnFilter||r.vendor===vnFilter));
+  rows = [...rows].sort((a,b)=>a.reviewer.localeCompare(b.reviewer)||a.vendor.localeCompare(b.vendor));
+
+  const groupOrder = Object.keys(GRP_W);
+  const cidsAll = Object.keys(CRITERIA).sort((a,b)=>{
+    const ga=groupOrder.indexOf(CRITERIA[a].grp), gb=groupOrder.indexOf(CRITERIA[b].grp);
+    return ga!==gb ? ga-gb : a.localeCompare(b);
+  });
+
+  const csvRows = [
+    ['Reviewer', 'Role', 'Vendor', 'Recommendation', 'Comment', ...cidsAll.map(id=>`${CRITERIA[id].label} (${CRITERIA[id].grp})`)],
+    ...rows.map(r => [
+      r.reviewer, r.reviewerRole||'', r.vendor, r.recommendation||'', r.comment||'',
+      ...cidsAll.map(id => r.scores&&r.scores[id] ? r.scores[id] : '')
+    ])
+  ];
+  dlCSV(csvRows, 'dam_individual_responses.csv');
+}
+
+// ── EXPORT: AGGREGATED SCORECARD ──
+function exportAggregatedCSV() {
+  const vns = VENDORS.map(v=>v.name);
+  const scores = {}; vns.forEach(vn=>{ scores[vn]=computeVendorScore(vn,allRows); });
+  const sorted = [...vns].sort((a,b)=>{
+    const sa=scores[a].total, sb=scores[b].total;
+    if(sa===null&&sb===null)return 0; if(sa===null)return 1; if(sb===null)return -1; return sb-sa;
+  });
+
+  const csvRows = [['Category', 'Criterion', 'Description', 'Priority', 'Weight', ...vns]];
+  Object.keys(GRP_W).forEach(g => {
+    Object.keys(CRITERIA).filter(id=>CRITERIA[id].grp===g).forEach(cid => {
+      const c = CRITERIA[cid];
+      const row = [g, c.label, c.desc, c.pri, c.w];
+      vns.forEach(vn => {
+        const sc = allRows.filter(r=>r.vendor===vn).flatMap(r=>r.scores&&r.scores[cid]?[r.scores[cid]]:[]);
+        row.push(sc.length ? (sc.reduce((a,b)=>a+b,0)/sc.length).toFixed(2) : '');
       });
-      rows.push(row);
+      csvRows.push(row);
     });
-    rows.push([`Group avg (${GRP_W[g]}%)`,g,'',...vns.map(vn=>fmt(scores[vn].groupScores[g]))]);
+    csvRows.push([`${g} group average (${GRP_W[g]}%)`, '', '', '', '', ...vns.map(vn=>fmt(scores[vn].groupScores[g]))]);
   });
-  rows.push(['TOTAL SCORE','','100%',...vns.map(vn=>fmt(scores[vn].total))]);
-  // Also export individual responses
-  rows.push([]);
-  rows.push(['--- INDIVIDUAL RESPONSES ---']);
-  rows.push(['Reviewer','Role','Vendor','Recommendation','Comment',...Object.keys(CRITERIA)]);
-  allRows.forEach(r=>{
-    rows.push([r.reviewer,r.reviewerRole||'',r.vendor,r.recommendation||'',r.comment||'',...Object.keys(CRITERIA).map(id=>r.scores&&r.scores[id]?r.scores[id]:'')]);
-  });
-  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='dam_results.csv'; a.click();
+  csvRows.push(['TOTAL SCORE', '', '', '', '100%', ...vns.map(vn=>fmt(scores[vn].total))]);
+  csvRows.push(['Rank', '', '', '', '', ...sorted.map((vn,i)=>scores[vn].total!==null?i+1:'—')]);
+  csvRows.push(['Recommend: Yes', '', '', '', '', ...vns.map(vn=>scores[vn].recCount.Yes)]);
+  csvRows.push(['Recommend: Maybe', '', '', '', '', ...vns.map(vn=>scores[vn].recCount.Maybe)]);
+  csvRows.push(['Recommend: No', '', '', '', '', ...vns.map(vn=>scores[vn].recCount.No)]);
+  dlCSV(csvRows, 'dam_aggregated_scorecard.csv');
+}
+
+function dlCSV(rows, filename) {
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = filename;
+  a.click();
 }
 
 // ══════════════════ UTILS ══════════════════
@@ -901,5 +947,3 @@ checkParam();
 </script>
 </body>
 </html>
-
- 
