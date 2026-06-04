@@ -95,15 +95,29 @@ h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8
 .gtab:not(.active) .gbadge { background: var(--g100); color: var(--g500); }
 
 /* ── CRITERION CARD ── */
-.ccard { background: #fff; border: 1px solid var(--g200); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; transition: border-color .15s; flex-wrap: wrap; }
+.ccard { background: #fff; border: 1px solid var(--g200); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; transition: border-color .15s; }
 .ccard.rated { border-color: var(--black); }
+.ccard.na-rated { border-color: var(--g300); background: var(--g50); }
+.ccard-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .clabel { font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
 .cdesc { font-size: 12px; color: var(--g500); }
+.cguidance { font-size: 12px; color: #1e40af; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 7px; padding: 8px 11px; margin-top: 9px; line-height: 1.55; }
 .pri { font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 8px; font-family: var(--mono); white-space: nowrap; }
-.star-row { display: flex; gap: 2px; }
+.star-row { display: flex; gap: 2px; align-items: center; }
 .star { background: none; font-size: 21px; padding: 2px; line-height: 1; transition: color .1s, transform .1s; color: #e0e0e0; }
 .star.on { color: var(--black); transform: scale(1.12); }
 .star-lbl { font-size: 10px; color: var(--g500); font-family: var(--mono); text-align: right; margin-top: 2px; min-height: 13px; }
+.na-btn { font-size: 10px; font-family: var(--mono); font-weight: 500; padding: 3px 8px; border-radius: 6px; margin-left: 6px; transition: all .15s; border: 1px solid var(--g300); background: #fff; color: var(--g500); }
+.na-btn:hover { border-color: var(--g500); color: var(--black); }
+.na-btn.active { background: var(--g200); border-color: var(--g500); color: var(--black); }
+.ccard-cmt { margin-top: 9px; }
+.ccard-cmt textarea { width: 100%; border: 1px solid var(--g200); border-radius: 7px; padding: 7px 10px; font-size: 12px; resize: none; outline: none; background: var(--g50); color: var(--black); transition: border-color .15s; }
+.ccard-cmt textarea:focus { border-color: var(--black); }
+
+/* ── GROUP TOOLTIP ── */
+.gtab-wrap { position: relative; display: inline-flex; }
+.gtip { display: none; position: absolute; top: calc(100% + 8px); left: 0; z-index: 200; background: var(--black); color: #fff; font-size: 11px; line-height: 1.5; border-radius: 8px; padding: 10px 13px; width: 240px; pointer-events: none; }
+.gtab-wrap:hover .gtip { display: block; }
 
 /* ── NAV ARROWS ── */
 .arrows { display: flex; gap: 7px; margin-bottom: 20px; }
@@ -320,60 +334,76 @@ const VENDORS = [
   { name:'Aprimo',             rfpUrl:null },
 ];
 
-const TIMELINE = [
-  { date:'19 May',   label:'RFP Launch',               done:true },
-  { date:'25 May',   label:'Q&A Answers shared',        done:true, today:true },
-  { date:'2 Jun',    label:'RFP Submissions deadline',  done:false },
-  { date:'5 Jun',    label:'Shortlist Announcement',    done:false },
-  { date:'8–19 Jun', label:'Demo + POC',                done:false },
-  { date:'24 Jun',   label:'Supplier Selection',        done:false },
-  { date:'29 Jun',   label:'Project Start',             done:false },
-];
+const GRP_DESC = {
+  Functional:  'Core DAM features any user interacts with — search, permissions, lifecycle management, and overall UX quality.',
+  Design:      'Capabilities specific to creative & design workflows — file formats, Figma integration, bulk ingest, and migration support.',
+  Performance: 'How well the platform connects creative assets to performance data and campaign outcomes.',
+  Technical:   'API quality, webhook architecture, AI/LLM compatibility, and security — assessed from documentation and proposal.',
+  Commercial:  'Pricing value, SLA quality, and contractual terms — assessed from commercial offer.',
+};
 
 const CRITERIA = {
-  F1: {label:'Search & filters',     desc:'Advanced search, saved views',             pri:'Must Have',  grp:'Functional',  w:1},
-  F2: {label:'AI semantic search',   desc:'AI-powered asset discovery',               pri:'Should Have',grp:'Functional',  w:0.8},
-  F3: {label:'Asset lifecycle',      desc:'Draft → Approved → Live → Expired',        pri:'Must Have',  grp:'Functional',  w:1},
-  F4: {label:'Granular permissions', desc:'Asset-level + folder-level per team',       pri:'Must Have',  grp:'Functional',  w:1},
-  F5: {label:'Metadata schema',      desc:'Rich, customisable metadata',               pri:'Must Have',  grp:'Functional',  w:1},
-  F6: {label:'Taxonomy governance',  desc:'Controlled vocabularies',                  pri:'Must Have',  grp:'Functional',  w:1},
-  F7: {label:'AI auto-tagging',      desc:'Auto-tagging on ingest',                   pri:'Must Have',  grp:'Functional',  w:1},
-  F8: {label:'Version control',      desc:'Asset history & versioning',               pri:'Should Have',grp:'Functional',  w:0.8},
-  F9: {label:'Brand portal',         desc:'Public-facing brand module',               pri:'Could Have', grp:'Functional',  w:0.5},
-  F10:{label:'OOH / non-digital',    desc:'Support for non-digital assets',           pri:'Should Have',grp:'Functional',  w:0.8},
-  F11:{label:'UX quality',           desc:'Ease of use, interface quality',           pri:'—',          grp:'Functional',  w:0.9},
-  D1: {label:'Creative file formats',desc:'Figma, PSD, AI, MP4, 4K, SVG…',           pri:'Must Have',  grp:'Design',      w:1},
-  D2: {label:'Figma plugin',         desc:'Figma plugin or direct integration',       pri:'Should Have',grp:'Design',      w:0.8},
-  D3: {label:'Figma sync',           desc:'Two-way Figma connector',                  pri:'Could Have', grp:'Design',      w:0.5},
-  D4: {label:'Bulk ingest',          desc:'Bulk ingest with metadata preservation',   pri:'Must Have',  grp:'Design',      w:1},
-  D5: {label:'Format conversion',    desc:'Automated format conversion',              pri:'Should Have',grp:'Design',      w:0.8},
-  D6: {label:'Migration support',    desc:'Onboarding & migration quality',           pri:'—',          grp:'Design',      w:0.9},
-  P1: {label:'Performance data',     desc:'Performance data linked to each asset',    pri:'Must Have',  grp:'Performance', w:1},
-  P2: {label:'Media data plug',      desc:'Plug media data for paid acquisition',     pri:'Must Have',  grp:'Performance', w:1},
-  P3: {label:'Asset ↔ landing page', desc:'Asset linked to landing page + tracking', pri:'Should Have',grp:'Performance', w:0.8},
-  P4: {label:'Usage analytics',      desc:'Internal usage tracking & analytics',      pri:'Should Have',grp:'Performance', w:0.8},
-  P5: {label:'Automated taxonomy',   desc:'Taxonomy supporting campaign structure',   pri:'Must Have',  grp:'Performance', w:1},
-  T1: {label:'API quality',          desc:'Clean, documented API',                    pri:'Must Have',  grp:'Technical',   w:1},
-  T2: {label:'Webhooks',             desc:'Webhook / event-driven architecture',      pri:'Must Have',  grp:'Technical',   w:1},
-  T3: {label:'AI/LLM compatibility', desc:'Claude can pull assets via API',           pri:'Must Have',  grp:'Technical',   w:1},
-  T4: {label:'CDN delivery',         desc:'CDN / direct URL delivery',                pri:'Should Have',grp:'Technical',   w:0.8},
-  T5: {label:'Slack integration',    desc:'Native Slack integration',                 pri:'Could Have', grp:'Technical',   w:0.5},
-  T6: {label:'EEA data residency',   desc:'Data stored in EEA',                       pri:'Must Have',  grp:'Technical',   w:1},
-  T7: {label:'Security standards',   desc:'SOC2 or equivalent audit report',          pri:'Must Have',  grp:'Technical',   w:1},
-  T8: {label:'Scalability & uptime', desc:'Reliability and uptime SLA',               pri:'Must Have',  grp:'Technical',   w:1},
-  T9: {label:'Rights management',    desc:'Rights management module',                 pri:'Could Have', grp:'Technical',   w:0.5},
-  C1: {label:'Pricing',              desc:'Competitive and transparent pricing',      pri:'—',          grp:'Commercial',  w:1},
-  C2: {label:'NET45 payment',        desc:'NET45, SEPA or bank transfer',             pri:'Must Have',  grp:'Commercial',  w:0.8},
-  C3: {label:'SLA coverage',         desc:'Technical + operational + support SLAs',   pri:'Must Have',  grp:'Commercial',  w:1},
-  C4: {label:'SLA penalties',        desc:'Penalties + termination rights on breach', pri:'Must Have',  grp:'Commercial',  w:1},
-  C5: {label:'Liability cap',        desc:'Min 3× annual fees; breaches carved out',  pri:'Must Have',  grp:'Commercial',  w:1},
-  C6: {label:'API change notice',    desc:'3 months notice; old version 6+ months',   pri:'Must Have',  grp:'Commercial',  w:0.8},
-  C7: {label:'Contract duration',    desc:'Max 12 months incl. implementation',       pri:'Must Have',  grp:'Commercial',  w:0.8},
-  C8: {label:'French law',           desc:'French law, Paris courts jurisdiction',    pri:'Must Have',  grp:'Commercial',  w:0.8},
-  C9: {label:'DPA compliance',       desc:'Data Processing Agreement',                pri:'Must Have',  grp:'Commercial',  w:1},
-  C10:{label:'ESG / EcoVadis',       desc:'EcoVadis or equivalent evidence',          pri:'Must Have',  grp:'Commercial',  w:0.9},
-  C11:{label:'EEA data transfer',    desc:'Sub-processor list + EEA-only transfers',  pri:'Must Have',  grp:'Commercial',  w:1},
-  C12:{label:'References quality',   desc:'Strong references in banking / fintech',   pri:'—',          grp:'Commercial',  w:0.9},
+  // ── FUNCTIONAL ──
+  F1: { label:'Search & filters',     desc:'Advanced search, saved views',           pri:'Must Have',  grp:'Functional',  w:1,
+        guidance:'Based on their RFP response and screenshots/demo shown: does their search architecture support filters granular enough for our taxonomy (market, format, status, team)? Judge on how they describe search in their proposal — do they show real examples or just list features?' },
+  F2: { label:'AI semantic search',   desc:'AI-powered asset discovery',             pri:'Should Have',grp:'Functional',  w:0.8,
+        guidance:'Does their proposal clearly explain how their AI search works and what it\'s trained on? Judge on the quality of their explanation and any examples provided — vague claims of "AI-powered search" without substance should score low.' },
+  F3: { label:'Asset lifecycle',      desc:'Draft → Approved → Live → Expired',     pri:'Must Have',  grp:'Functional',  w:1,
+        guidance:'Does their proposed workflow map to ours (Draft → Approved → Live → Expired)? Judge on whether non-Design teams could understand and operate the status system based on what\'s described — not just whether the feature exists.' },
+  F4: { label:'Granular permissions', desc:'Asset-level + folder-level per team',   pri:'Must Have',  grp:'Functional',  w:1,
+        guidance:'Does their permissions model allow us to map our real org structure (Brand Design edit, Paid Acquisition read-only, external agency scoped access) without workarounds? Judge on the specificity of their answer — generic "role-based access" is not enough.' },
+  F5: { label:'Metadata schema',      desc:'Rich, customisable metadata',           pri:'Must Have',  grp:'Functional',  w:1,
+        guidance:'Can a non-technical admin define, rename and remove custom metadata fields per asset type without engineering support? Judge on whether they describe this as self-serve or as a setup they configure for us.' },
+  F6: { label:'Taxonomy governance',  desc:'Controlled vocabularies',               pri:'Must Have',  grp:'Functional',  w:1,
+        guidance:'Can controlled vocabularies be locked so users can\'t free-type and pollute the taxonomy? Judge on whether their proposal describes an admin-controlled system or relies on user discipline.' },
+  F7: { label:'AI auto-tagging',      desc:'Auto-tagging quality on ingest',        pri:'Must Have',  grp:'Functional',  w:1,
+        guidance:'Based on their proposal: how specific is their AI tagging to our content types (ads, brand assets, video)? Judge on whether they describe tagging quality and customisability, or just claim auto-tagging exists.' },
+  F8: { label:'Version control',      desc:'Asset history & versioning',            pri:'Should Have',grp:'Functional',  w:0.8,
+        guidance:'Is version history accessible to non-Design users (Growth, PMM) or locked behind a designer workflow? Judge on how they describe the feature and who it\'s designed for in their proposal.' },
+  F9: { label:'Brand portal',         desc:'Public-facing brand module',            pri:'Could Have', grp:'Functional',  w:0.5,
+        guidance:'Is this a real module with customisable access for external partners, or just a shared folder with a different name? Judge on the depth of their description and any screenshots provided.' },
+  F11:{ label:'UX quality',           desc:'Ease of use, interface quality',        pri:'—',          grp:'Functional',  w:0.9,
+        guidance:'Based on screenshots, recorded demos, or walkthrough provided: would a non-technical Qonto employee find and use an asset on day 1 without training? Judge on interface clarity from what they\'ve shared — penalise if they couldn\'t show it.' },
+  // ── DESIGN ──
+  D2: { label:'Figma plugin',         desc:'Figma plugin or direct integration',    pri:'Should Have',grp:'Design',      w:0.8,
+        guidance:'Does their Figma plugin allow publishing with metadata, or is it just a browse-and-insert tool? Judge on the depth of their description and any documentation provided — a plugin that doesn\'t carry metadata over is nearly useless for us.' },
+  D3: { label:'Figma sync',           desc:'Two-way Figma connector',               pri:'Could Have', grp:'Design',      w:0.5,
+        guidance:'Is this truly bidirectional (DAM updates when Figma updates) or just a one-way publish? Judge on the technical specificity of their answer — "Figma integration" without detail should score low.' },
+  D6: { label:'Migration support',    desc:'Onboarding & migration quality',        pri:'—',          grp:'Design',      w:0.9,
+        guidance:'What exactly do they include in migration support — do they provide tooling, a dedicated resource, or just documentation? Judge on the concreteness of their migration offer and whether it covers our three sources (Drive, Frame.io, Figma).' },
+  // ── PERFORMANCE ──
+  P1: { label:'Performance data',     desc:'Performance data linked to each asset', pri:'Must Have',  grp:'Performance', w:1,
+        guidance:'Is performance data (CTR, spend, conversion) linked to assets via a native integration or a manual process we\'d have to maintain? Judge on whether they describe a real data pipeline or a workaround in their proposal.' },
+  P2: { label:'Media data plug',      desc:'Plug media data for paid acquisition',  pri:'Must Have',  grp:'Performance', w:1,
+        guidance:'Do they have a documented, working integration with Motion or equivalent paid creative analytics? Judge on whether they can name the integration and explain how it works — not just say it\'s possible via API.' },
+  P3: { label:'Asset ↔ landing page', desc:'Asset linked to landing page + tracking',pri:'Should Have',grp:'Performance',w:0.8,
+        guidance:'Can assets be linked to landing pages with trackable URLs in their system? Judge on whether this is a described feature with examples, or something they\'re suggesting could be built.' },
+  P4: { label:'Usage analytics',      desc:'Internal usage tracking & analytics',   pri:'Should Have',grp:'Performance', w:0.8,
+        guidance:'Does their analytics go beyond download counts — can we see who used an asset, in which campaign, and when? Judge on the depth of analytics described in their proposal.' },
+  // ── TECHNICAL ──
+  T1: { label:'API quality',          desc:'Clean, documented API',                 pri:'Must Have',  grp:'Technical',   w:1,
+        guidance:'Review their API documentation (linked or provided in the RFP). Is it asset-retrieval-first, well-structured, and could Seb build a Claude integration on it in a sprint? Judge on documentation quality, rate limit transparency, and endpoint coverage — not just the claim of having an API.' },
+  T2: { label:'Webhooks',             desc:'Webhook / event-driven architecture',   pri:'Must Have',  grp:'Technical',   w:1,
+        guidance:'Do they describe a robust, documented webhook system with real event triggers (e.g. asset approved, asset expired)? Judge on specificity — "we support webhooks" without documentation or examples scores low.' },
+  T3: { label:'AI/LLM compatibility', desc:'Claude can pull assets via API',        pri:'Must Have',  grp:'Technical',   w:1,
+        guidance:'Based on their API documentation: can Claude query and retrieve assets programmatically with structured filters — or is the API primarily built for UI interactions? Judge on whether the API returns machine-readable, filterable data.' },
+  T7: { label:'Security standards',   desc:'SOC2 Type II or equivalent',            pri:'Must Have',  grp:'Technical',   w:1,
+        guidance:'Do they provide SOC2 Type II certification (not just Type I) or equivalent? Judge on what they actually submit — certification date matters, an expired or Type I cert is not sufficient for Qonto\'s compliance requirements.' },
+  T8: { label:'Scalability & uptime', desc:'Reliability and uptime SLA',            pri:'Must Have',  grp:'Technical',   w:1,
+        guidance:'Do they provide verifiable uptime history and infrastructure evidence at our scale? Judge on whether their SLA is backed by real data (uptime reports, client references at scale) or is just a contractual clause.' },
+  T9: { label:'Rights management',    desc:'Rights management module',              pri:'Could Have', grp:'Technical',   w:0.5,
+        guidance:'Is rights management a real workflow with expiry enforcement and geographic restrictions — or just a metadata field we\'d police manually? Judge on whether they describe automated enforcement or a manual process.' },
+  // ── COMMERCIAL ──
+  C1: { label:'Pricing',              desc:'Competitive and transparent pricing',   pri:'—',          grp:'Commercial',  w:1,
+        guidance:'Given the full commercial offer: is the price fair relative to what\'s delivered and to the other shortlisted vendors? Judge on total cost of ownership — headline price, per-seat cost, storage overage, and what\'s billed as an add-on.' },
+  C3: { label:'SLA coverage',         desc:'Technical + operational + support SLAs',pri:'Must Have',  grp:'Commercial',  w:1,
+        guidance:'Do their SLAs cover all three dimensions (technical uptime, incident response, support response) with defined response times and escalation paths? Judge on whether these are specific commitments or broad statements.' },
+  C4: { label:'SLA penalties',        desc:'Penalties + termination rights on breach',pri:'Must Have',grp:'Commercial',  w:1,
+        guidance:'Are the penalty clauses (service credits, termination rights) proportionate and actually a deterrent? Judge on whether the penalty structure would matter to them commercially, or is too small to change their behaviour.' },
+  C5: { label:'Liability cap',        desc:'Min 3× annual fees; breaches carved out',pri:'Must Have',grp:'Commercial',  w:1,
+        guidance:'Is the liability cap at minimum 3× annual fees with data breaches uncapped? Judge on their counter-proposal — anything below this threshold or with a capped data breach clause is a dealbreaker unless Polina approves an exception.' },
+  C12:{ label:'References quality',   desc:'Strong references in banking / fintech',pri:'—',          grp:'Commercial',  w:0.9,
+        guidance:'Can they provide at least one reference from financial services or fintech at our scale who can speak to compliance, multi-market operations, and high asset volume? Judge on relevance of the reference — a retail or B2C reference is not equivalent.' },
 };
 
 const GRP_W = {Functional:30,Design:20,Performance:20,Technical:20,Commercial:10};
@@ -382,17 +412,17 @@ const SL    = ['','Poor','Fair','Good','Great','Excellent'];
 const PRI_S = {'Must Have':'background:#0a0a0a;color:#fff','Should Have':'background:#f0f0f0;color:#0a0a0a','Could Have':'background:#f8f8f8;color:#aaa','—':'background:#f8f8f8;color:#ccc'};
 
 const REVIEWERS = {
-  hortense:{name:'Hortense',      role:'Growth Programs Manager',           criteria:['F1','F2','F3','F4','F6','D4','D6','P1','P3','P4','P5','C1','C12']},
-  julie:   {name:'Julie R',       role:'Brand, Comms & Creativity Director',criteria:['F1','F2','F3','F4','F9','F10','F11','T9']},
-  didier:  {name:'Didier H',      role:'Design Director',                   criteria:['F1','F2','F5','F8','F11','D1','D2','D3']},
-  carla:   {name:'Carla',         role:'Head of Brand Design',              criteria:['F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','D1','D2','D3','T9']},
-  soline:  {name:'Soline A',      role:'Design Ops & Enablement',           criteria:['F1','F3','F4','F5','F6','F7','F8','F10','F11','D1','D2','D4','D5','D6']},
-  alex:    {name:'Alex Laloo',    role:'Head of Growth Ops',                criteria:['P1','P2','P4','P5','T1','T2','T5']},
+  hortense:{name:'Hortense',      role:'Growth Programs Manager',           criteria:['F1','F2','F3','F4','F6','D6','P1','P3','P4','C1','C12']},
+  julie:   {name:'Julie R',       role:'Brand, Comms & Creativity Director',criteria:['F1','F2','F3','F4','F9','F11','T9']},
+  didier:  {name:'Didier H',      role:'Design Director',                   criteria:['F1','F2','F5','F8','F11','D2','D3']},
+  carla:   {name:'Carla',         role:'Head of Brand Design',              criteria:['F1','F2','F3','F4','F5','F6','F7','F8','F9','F11','D2','D3','T9']},
+  soline:  {name:'Soline A',      role:'Design Ops & Enablement',           criteria:['F1','F3','F4','F5','F6','F7','F8','F11','D2','D6']},
+  alex:    {name:'Alex Laloo',    role:'Head of Growth Ops',                criteria:['P1','P2','P4','T1','T2']},
   vincent: {name:'Vincent Martin',role:'Head of Growth Programs',           criteria:['P1','P2','P3','P4']},
-  teresa:  {name:'Teresa',        role:'Head of Paid Acquisition',          criteria:['P1','P2','P3','P4','P5']},
-  seb:     {name:'Seb',           role:'Website Engineer',                  criteria:['T1','T2','T3','T4','T5','T6','T8','C6']},
-  aymeric: {name:'Aymeric',       role:'CTO',                               criteria:['T1','T2','T3','T4','T6','T7','T8','C3','C6','C9','C11']},
-  polina:  {name:'Polina',        role:'Procurement / Legal',               criteria:['T6','T7','C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12']},
+  teresa:  {name:'Teresa',        role:'Head of Paid Acquisition',          criteria:['P1','P2','P3','P4']},
+  seb:     {name:'Seb',           role:'Website Engineer',                  criteria:['T1','T2','T3','T8']},
+  aymeric: {name:'Aymeric',       role:'CTO',                               criteria:['T1','T2','T3','T7','T8','C3']},
+  polina:  {name:'Polina',        role:'Procurement / Legal',               criteria:['C1','C3','C4','C5','C12']},
 };
 
 // ══════════════════ LOCAL STATE ══════════════════
@@ -403,6 +433,10 @@ function ls(){ try{return JSON.parse(localStorage.getItem('dam_v3')||'{}');}catc
 function lsSave(d){ localStorage.setItem('dam_v3',JSON.stringify(d)); }
 function getScore(r,v,c){ return ls()[`${r}:${v}:${c}`]||0; }
 function setScore(r,v,c,s){ const d=ls(); d[`${r}:${v}:${c}`]=s; lsSave(d); }
+function getNa(r,v,c){ return !!ls()[`${r}:${v}:${c}:na`]; }
+function setNa(r,v,c,val){ const d=ls(); if(val) d[`${r}:${v}:${c}:na`]=true; else delete d[`${r}:${v}:${c}:na`]; lsSave(d); }
+function getCritCmt(r,v,c){ return ls()[`${r}:${v}:${c}:cmt`]||''; }
+function setCritCmt(r,v,c,t){ const d=ls(); if(t) d[`${r}:${v}:${c}:cmt`]=t; else delete d[`${r}:${v}:${c}:cmt`]; lsSave(d); }
 function getRec(r,v){ return ls()[`${r}:${v}:_rec`]||null; }
 function setRecLS(r,v,x){ const d=ls(); d[`${r}:${v}:_rec`]=x; lsSave(d); }
 function getCmt(r,v){ return ls()[`${r}:${v}:_cmt`]||''; }
@@ -567,10 +601,13 @@ function renderGTabs() {
   const grps=getGroups();
   document.getElementById('gTabs').innerHTML=grps.map(g=>{
     const gc=REVIEWERS[curReviewer].criteria.filter(id=>CRITERIA[id].grp===g);
-    const rated=gc.filter(id=>getScore(curReviewer,curVendor,id)>0).length;
-    return`<button class="gtab ${g===curGroup?'active':''}" onclick="switchGrp('${g}')">
-      ${GRP_I[g]} ${g}${rated?`<span class="gbadge">${rated}/${gc.length}</span>`:''}
-    </button>`;
+    const rated=gc.filter(id=>getScore(curReviewer,curVendor,id)>0||getNa(curReviewer,curVendor,id)).length;
+    return`<div class="gtab-wrap">
+      <button class="gtab ${g===curGroup?'active':''}" onclick="switchGrp('${g}')">
+        ${GRP_I[g]} ${g}${rated?`<span class="gbadge">${rated}/${gc.length}</span>`:''}
+      </button>
+      <div class="gtip">${GRP_DESC[g]}</div>
+    </div>`;
   }).join('');
 }
 
@@ -580,14 +617,37 @@ function renderCards() {
   const grps=getGroups(), isLast=curGroup===grps[grps.length-1], curIdx=grps.indexOf(curGroup);
   const cids=REVIEWERS[curReviewer].criteria.filter(id=>CRITERIA[id].grp===curGroup);
   document.getElementById('cCards').innerHTML=cids.map(id=>{
-    const c=CRITERIA[id], val=getScore(curReviewer,curVendor,id);
-    const stars=[1,2,3,4,5].map(i=>`<button class="star ${i<=val?'on':''}" onmouseenter="hov('${id}',${i})" onmouseleave="unho('${id}')" onclick="rateStar('${id}',${i})">★</button>`).join('');
-    return`<div class="ccard ${val>0?'rated':''}" id="cc-${id}">
-      <div style="flex:1;min-width:150px"><div class="clabel">${c.label}<span class="pri" style="${PRI_S[c.pri]}">${c.pri}</span></div><div class="cdesc">${c.desc}</div></div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
-        <div class="star-row" id="sr-${id}">${stars}</div>
-        <div class="star-lbl" id="sl-${id}">${val?SL[val]:''}</div>
-      </div></div>`;
+    const c=CRITERIA[id];
+    const val=getScore(curReviewer,curVendor,id);
+    const isNa=getNa(curReviewer,curVendor,id);
+    const critCmt=getCritCmt(curReviewer,curVendor,id);
+    const stars=[1,2,3,4,5].map(i=>{
+      const isOn = !isNa && i<=val;
+      const mEnter = isNa ? '' : `onmouseenter="hov('${id}',${i})"`;
+      const mLeave = isNa ? '' : `onmouseleave="unho('${id}')"`;
+      const click  = isNa ? '' : `onclick="rateStar('${id}',${i})"`;
+      const dis    = isNa ? 'disabled style="opacity:.3"' : '';
+      return `<button class="star ${isOn?'on':''}" ${dis} ${mEnter} ${mLeave} ${click}>★</button>`;
+    }).join('');
+    return`<div class="ccard ${isNa?'na-rated':val>0?'rated':''}" id="cc-${id}">
+      <div class="ccard-top">
+        <div style="flex:1;min-width:150px">
+          <div class="clabel">${c.label}<span class="pri" style="${PRI_S[c.pri]}">${c.pri}</span></div>
+          <div class="cdesc">${c.desc}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
+          <div class="star-row">
+            <div id="sr-${id}">${stars}</div>
+            <button class="na-btn ${isNa?'active':''}" onclick="toggleNa('${id}')" title="Not applicable / don't know">N/A</button>
+          </div>
+          <div class="star-lbl" id="sl-${id}">${isNa?'N/A':val?SL[val]:''}</div>
+        </div>
+      </div>
+      ${c.guidance?`<div class="cguidance">💡 ${c.guidance}</div>`:''}
+      <div class="ccard-cmt">
+        <textarea rows="1" placeholder="Add a comment on this criterion (optional)…" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';setCritCmt('${curReviewer}','${curVendor}','${id}',this.value)">${critCmt}</textarea>
+      </div>
+    </div>`;
   }).join('');
   document.getElementById('navArrows').innerHTML=`
     ${curIdx>0?`<button class="arr-prev" onclick="switchGrp('${grps[curIdx-1]}')">← ${grps[curIdx-1]}</button>`:''}
@@ -604,28 +664,44 @@ function renderCards() {
 }
 
 function hov(id,v){
+  if(getNa(curReviewer,curVendor,id)) return;
   const row=document.getElementById('sr-'+id); if(!row)return;
   row.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<v));
   const lbl=document.getElementById('sl-'+id); if(lbl)lbl.textContent=SL[v];
 }
 function unho(id){
+  if(getNa(curReviewer,curVendor,id)) return;
   const v=getScore(curReviewer,curVendor,id);
   const row=document.getElementById('sr-'+id); if(!row)return;
   row.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<v));
   const lbl=document.getElementById('sl-'+id); if(lbl)lbl.textContent=v?SL[v]:'';
 }
 function rateStar(id,v){
+  if(getNa(curReviewer,curVendor,id)) return;
   const cur=getScore(curReviewer,curVendor,id), nv=cur===v?0:v;
   setScore(curReviewer,curVendor,id,nv);
-  const cc=document.getElementById('cc-'+id); if(cc)cc.classList.toggle('rated',nv>0);
+  const cc=document.getElementById('cc-'+id); if(cc){ cc.classList.toggle('rated',nv>0); cc.classList.remove('na-rated'); }
   const row=document.getElementById('sr-'+id); if(row)row.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<nv));
   const lbl=document.getElementById('sl-'+id); if(lbl)lbl.textContent=nv?SL[nv]:'';
   updateProg(); renderGTabs(); updateSubBtn();
 }
+function toggleNa(id){
+  const wasNa=getNa(curReviewer,curVendor,id);
+  setNa(curReviewer,curVendor,id,!wasNa);
+  if(!wasNa){ setScore(curReviewer,curVendor,id,0); } // clear star if setting N/A
+  const cc=document.getElementById('cc-'+id);
+  if(cc){ cc.classList.toggle('na-rated',!wasNa); cc.classList.toggle('rated',false); }
+  const row=document.getElementById('sr-'+id);
+  if(row){ row.querySelectorAll('.star').forEach(s=>{ s.classList.remove('on'); s.disabled=!wasNa; s.style.opacity=!wasNa?'0.3':'1'; }); }
+  const lbl=document.getElementById('sl-'+id); if(lbl)lbl.textContent=!wasNa?'N/A':'';
+  const naBtn=cc?.querySelector('.na-btn'); if(naBtn)naBtn.classList.toggle('active',!wasNa);
+  updateProg(); renderGTabs(); updateSubBtn();
+}
 function updateProg(){
-  const cids=REVIEWERS[curReviewer].criteria, rated=cids.filter(id=>getScore(curReviewer,curVendor,id)>0).length;
-  document.getElementById('fhProg').textContent=`${rated}/${cids.length} rated`;
-  document.getElementById('progFill').style.width=`${(rated/cids.length)*100}%`;
+  const cids=REVIEWERS[curReviewer].criteria;
+  const answered=cids.filter(id=>getScore(curReviewer,curVendor,id)>0||getNa(curReviewer,curVendor,id)).length;
+  document.getElementById('fhProg').textContent=`${answered}/${cids.length} answered`;
+  document.getElementById('progFill').style.width=`${(answered/cids.length)*100}%`;
 }
 function setRec(v){ curRec=v; setRecLS(curReviewer,curVendor,v); updateRecBtns(); updateSubBtn(); }
 function updateRecBtns(){
@@ -643,11 +719,16 @@ async function submitRating() {
   document.getElementById('subSpinner').style.display='block';
   document.getElementById('subLabel').textContent='Saving…';
   const r=REVIEWERS[curReviewer], cmt=document.getElementById('cmtArea').value;
-  const scores={};
-  r.criteria.forEach(id=>{ const v=getScore(curReviewer,curVendor,id); if(v>0)scores[id]=v; });
-  const payload={ timestamp:new Date().toISOString(), reviewer:r.name, reviewerRole:r.role, vendor:curVendor, scores, recommendation:curRec||'', comment:cmt };
+  const scores={}, naFlags={}, critComments={};
+  r.criteria.forEach(id=>{
+    const v=getScore(curReviewer,curVendor,id);
+    if(v>0) scores[id]=v;
+    if(getNa(curReviewer,curVendor,id)) naFlags[id]=true;
+    const cc=getCritCmt(curReviewer,curVendor,id);
+    if(cc) critComments[id]=cc;
+  });
+  const payload={ timestamp:new Date().toISOString(), reviewer:r.name, reviewerRole:r.role, vendor:curVendor, scores, naFlags, critComments, recommendation:curRec||'', comment:cmt };
   await postToSheet(payload);
-  // Always save to localStorage as backup
   const d=ls(); d[`${curReviewer}:${curVendor}:_rec`]=curRec||'submitted'; lsSave(d);
   document.getElementById('subSpinner').style.display='none';
   show('s-success'); hide('s-rating');
@@ -816,10 +897,13 @@ function renderIndividual() {
       <td style="font-size:11px;color:var(--g500);white-space:nowrap">${row.reviewerRole||''}</td>
       <td style="font-weight:500;white-space:nowrap">${row.vendor}</td>
       ${cids.map(id=>{
-        const v=row.scores?row.scores[id]:null;
-        if(!v) return `<td class="sc-cell na">—</td>`;
+        const isNa = row.naFlags&&row.naFlags[id];
+        const v = row.scores?row.scores[id]:null;
+        const cc = row.critComments?row.critComments[id]:'';
+        if(isNa) return `<td class="sc-cell" style="color:#aaa;font-size:10px;font-family:var(--mono)" title="${cc||''}">N/A</td>`;
+        if(!v) return `<td class="sc-cell na" title="${cc||''}">—</td>`;
         const stars=[1,2,3,4,5].map(i=>`<span class="${i<=v?'s1':'s0'}">★</span>`).join('');
-        return`<td class="sc-cell ${scCls(v)}"><div>${v}</div><div class="stars-xs">${stars}</div></td>`;
+        return`<td class="sc-cell ${scCls(v)}" title="${cc||''}"><div>${v}</div><div class="stars-xs">${stars}</div>${cc?`<div style="font-size:9px;color:var(--g500);margin-top:2px;max-width:70px;white-space:normal;line-height:1.3">${cc}</div>`:''}</td>`;
       }).join('')}
       <td style="text-align:center;font-size:16px">${row.recommendation==='Yes'?'✅':row.recommendation==='No'?'❌':row.recommendation==='Maybe'?'🤔':'—'}</td>
       <td style="font-size:11px;color:var(--g600);max-width:200px">${row.comment||''}</td>
@@ -890,10 +974,16 @@ function exportIndividualCSV() {
   });
 
   const csvRows = [
-    ['Reviewer', 'Role', 'Vendor', 'Recommendation', 'Comment', ...cidsAll.map(id=>`${CRITERIA[id].label} (${CRITERIA[id].grp})`)],
+    ['Reviewer', 'Role', 'Vendor', 'Recommendation', 'Comment',
+     ...cidsAll.flatMap(id=>[`${CRITERIA[id].label} — Score`, `${CRITERIA[id].label} — N/A`, `${CRITERIA[id].label} — Comment`])],
     ...rows.map(r => [
       r.reviewer, r.reviewerRole||'', r.vendor, r.recommendation||'', r.comment||'',
-      ...cidsAll.map(id => r.scores&&r.scores[id] ? r.scores[id] : '')
+      ...cidsAll.flatMap(id => {
+        const isNa = r.naFlags&&r.naFlags[id];
+        const score = r.scores&&r.scores[id] ? r.scores[id] : '';
+        const cc = r.critComments&&r.critComments[id] ? r.critComments[id] : '';
+        return [isNa?'N/A':score, isNa?'yes':'', cc];
+      })
     ])
   ];
   dlCSV(csvRows, 'dam_individual_responses.csv');
