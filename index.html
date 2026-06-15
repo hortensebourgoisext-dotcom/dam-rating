@@ -3,1055 +3,384 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DAM Vendor Rating · Qonto</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>DAM Vendor Results · Qonto</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --black: #0a0a0a; --white: #fff;
-  --g50: #fafafa; --g100: #f5f5f5; --g200: #ebebeb; --g300: #d4d4d4; --g500: #888; --g600: #666;
-  --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
-}
-body { font-family: var(--font); background: var(--g50); color: var(--black); min-height: 100vh; }
-button { font-family: var(--font); cursor: pointer; border: none; }
-textarea, input, select { font-family: var(--font); }
-
-/* ── NAV ── */
-.nav { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1px solid var(--g200); padding: 0 24px; display: flex; align-items: center; height: 52px; gap: 0; overflow-x: auto; }
-.nav-logo { font-size: 13px; font-weight: 600; margin-right: 20px; white-space: nowrap; flex-shrink: 0; }
-.nav-logo span { font-family: var(--mono); font-size: 10px; color: var(--g500); margin-left: 6px; font-weight: 400; }
-.nav-tab { height: 52px; padding: 0 14px; background: none; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 500; color: var(--g500); transition: all .15s; white-space: nowrap; flex-shrink: 0; }
-.nav-tab:hover { color: var(--black); }
-.nav-tab.active { color: var(--black); border-bottom-color: var(--black); }
-
-/* ── SCREENS ── */
-.screen { display: none; } .screen.active { display: block; }
-
-/* ── LAYOUTS ── */
-.page { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
-.page-wide { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
-.eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 3px; color: #bbb; text-transform: uppercase; margin-bottom: 12px; }
-h1.hero { font-size: 30px; font-weight: 600; line-height: 1.15; margin-bottom: 8px; }
-.sub { font-size: 14px; color: var(--g500); line-height: 1.6; }
-.divider { margin-top: 44px; padding-top: 36px; border-top: 1px solid var(--g200); }
-
-/* ── SETUP BANNER ── */
-.setup-banner { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 10px; padding: 16px 18px; margin-bottom: 28px; }
-.setup-banner h3 { font-size: 13px; font-weight: 600; color: #92400e; margin-bottom: 6px; }
-.setup-banner p { font-size: 12px; color: #92400e; margin-bottom: 10px; line-height: 1.6; }
-.setup-row { display: flex; gap: 8px; }
-.setup-input { flex: 1; border: 1px solid #fcd34d; border-radius: 7px; padding: 8px 12px; font-size: 12px; font-family: var(--mono); background: #fff; outline: none; min-width: 0; }
-.setup-input:focus { border-color: #92400e; }
-.setup-save { background: #92400e; color: #fff; border-radius: 7px; padding: 8px 14px; font-size: 12px; font-weight: 500; white-space: nowrap; }
-.setup-ok { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #15803d; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
-.setup-ok button { background: none; font-size: 11px; color: #15803d; text-decoration: underline; }
-
-/* ── RFP GRID ── */
-.rfp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-top: 20px; }
-.rfp-card { background: #fff; border: 1px solid var(--g200); border-radius: 12px; padding: 16px; transition: border-color .15s; }
-.rfp-card:hover { border-color: var(--black); }
-.rfp-card a { text-decoration: none; display: flex; gap: 10px; }
-.rfp-card-inner { display: flex; gap: 10px; }
-.rfp-icon { width: 32px; height: 32px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-.rfp-name { font-size: 13px; font-weight: 600; color: var(--black); }
-.rfp-meta { font-size: 11px; color: var(--g500); margin-top: 1px; }
-.badge { display: inline-flex; align-items: center; font-size: 10px; font-family: var(--mono); padding: 2px 6px; border-radius: 8px; margin-top: 5px; }
-.bg { background: #f0fdf4; color: #15803d; } .br { background: var(--g100); color: var(--g500); }
-
-/* ── TIMELINE ── */
-.tl-row { display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--g100); }
-.tl-date { width: 68px; font-size: 11px; font-family: var(--mono); color: var(--g500); padding-top: 2px; white-space: nowrap; }
-.tl-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
-.tl-label { font-size: 13px; }
-
-/* ── REVIEWER LIST ── */
-.rev-btn { width: 100%; background: #fff; border: 1px solid var(--g200); border-radius: 10px; padding: 13px 16px; text-align: left; display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; transition: all .15s; }
-.rev-btn:hover { background: var(--black); border-color: var(--black); color: #fff; }
-.rev-btn:hover .rev-role, .rev-btn:hover .chev { color: rgba(255,255,255,.6) !important; }
-.rev-name { font-weight: 600; font-size: 14px; }
-.rev-role { font-size: 12px; color: var(--g500); margin-top: 2px; }
-.chev { color: #ccc; font-size: 18px; }
-
-/* ── VENDOR SELECT ── */
-.vendor-btn { width: 100%; background: #fff; border: 1px solid var(--g200); border-radius: 10px; padding: 14px 16px; text-align: left; display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; transition: all .15s; font-size: 15px; font-weight: 500; }
-.vendor-btn:hover { background: var(--black); border-color: var(--black); color: #fff; }
-.vendor-btn:hover .chev { color: rgba(255,255,255,.6) !important; }
-
-/* ── FORM HEADER ── */
-.form-hdr { position: sticky; top: 52px; z-index: 90; background: #fff; border-bottom: 1px solid var(--g200); padding: 10px 24px; }
-.form-hdr-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
-.prog-bar { flex: 1; height: 4px; background: var(--g100); border-radius: 2px; overflow: hidden; max-width: 140px; }
-.prog-fill { height: 100%; background: var(--black); border-radius: 2px; transition: width .3s; }
-.back-btn { background: none; border: 1px solid var(--g200); border-radius: 7px; padding: 5px 11px; font-size: 12px; color: var(--g500); }
-.back-btn:hover { border-color: var(--black); color: var(--black); }
-
-/* ── GROUP TABS ── */
-.gtabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 20px; }
-.gtab { background: #fff; color: var(--g600); border: 1px solid var(--g200); border-radius: 20px; padding: 5px 12px; font-size: 12px; font-weight: 500; transition: all .15s; display: flex; align-items: center; gap: 4px; }
-.gtab:hover { border-color: var(--black); color: var(--black); }
-.gtab.active { background: var(--black); color: #fff; border-color: var(--black); }
-.gbadge { border-radius: 10px; padding: 0 5px; font-size: 10px; }
-.gtab.active .gbadge { background: rgba(255,255,255,.22); }
-.gtab:not(.active) .gbadge { background: var(--g100); color: var(--g500); }
-
-/* ── CRITERION CARD ── */
-.ccard { background: #fff; border: 1px solid var(--g200); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; transition: border-color .15s; }
-.ccard.rated { border-color: var(--black); }
-.ccard.na-rated { border-color: var(--g300); background: var(--g50); }
-.ccard-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.clabel { font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
-.cdesc { font-size: 12px; color: var(--g500); }
-.cguidance { font-size: 12px; color: #1e40af; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 7px; padding: 8px 11px; margin-top: 9px; line-height: 1.55; }
-.pri { font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 8px; font-family: var(--mono); white-space: nowrap; }
-.star-row { display: flex; gap: 2px; align-items: center; }
-.star { background: none; font-size: 21px; padding: 2px; line-height: 1; transition: color .1s, transform .1s; color: #e0e0e0; }
-.star.on { color: var(--black); transform: scale(1.12); }
-.star-lbl { font-size: 10px; color: var(--g500); font-family: var(--mono); text-align: right; margin-top: 2px; min-height: 13px; }
-.na-btn { font-size: 10px; font-family: var(--mono); font-weight: 500; padding: 3px 8px; border-radius: 6px; margin-left: 6px; transition: all .15s; border: 1px solid var(--g300); background: #fff; color: var(--g500); }
-.na-btn:hover { border-color: var(--g500); color: var(--black); }
-.na-btn.active { background: var(--g200); border-color: var(--g500); color: var(--black); }
-.ccard-cmt { margin-top: 9px; }
-.ccard-cmt textarea { width: 100%; border: 1px solid var(--g200); border-radius: 7px; padding: 7px 10px; font-size: 12px; resize: none; outline: none; background: var(--g50); color: var(--black); transition: border-color .15s; }
-.ccard-cmt textarea:focus { border-color: var(--black); }
-
-/* ── GROUP TOOLTIP ── */
-.gtab-wrap { position: relative; display: inline-flex; }
-.gtip { display: none; position: absolute; top: calc(100% + 8px); left: 0; z-index: 200; background: var(--black); color: #fff; font-size: 11px; line-height: 1.5; border-radius: 8px; padding: 10px 13px; width: 240px; pointer-events: none; }
-.gtab-wrap:hover .gtip { display: block; }
-
-/* ── NAV ARROWS ── */
-.arrows { display: flex; gap: 7px; margin-bottom: 20px; }
-.arr-prev { flex: 1; background: #fff; border: 1px solid var(--g200); border-radius: 10px; padding: 10px; font-size: 13px; color: var(--g600); }
-.arr-prev:hover { border-color: var(--black); color: var(--black); }
-.arr-next { flex: 1; background: var(--black); border-radius: 10px; padding: 10px; font-size: 13px; color: #fff; font-weight: 500; }
-
-/* ── OVERALL ── */
-.overall-box { background: #fff; border: 1px solid var(--g200); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
-.rec-row { display: flex; gap: 7px; margin-bottom: 16px; }
-.rec-btn { flex: 1; padding: 9px; border-radius: 8px; font-size: 13px; font-weight: 500; transition: all .15s; }
-.rec-btn.off { background: #fff; border: 1px solid var(--g200); color: var(--g600); }
-.rec-btn.on  { background: var(--black); border: 1px solid var(--black); color: #fff; }
-.cmt-area { width: 100%; border: 1px solid var(--g200); border-radius: 8px; padding: 9px 11px; font-size: 13px; resize: vertical; outline: none; background: var(--g50); }
-.cmt-area:focus { border-color: var(--black); }
-
-/* ── SUBMIT ── */
-.submit-btn { width: 100%; background: var(--black); color: #fff; border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 600; transition: all .2s; margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.submit-btn:disabled { background: var(--g200); color: var(--g500); cursor: not-allowed; }
-.spinner { width: 15px; height: 15px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── SUCCESS ── */
-.success-wrap { min-height: calc(100vh - 52px); display: flex; align-items: center; justify-content: center; padding: 24px; }
-
-/* ── INFO BOXES ── */
-.info { padding: 11px 14px; border-radius: 9px; font-size: 13px; margin-bottom: 16px; }
-.info-green  { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-.info-yellow { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
-.info-blue   { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
-.info-gray   { background: var(--g100); color: var(--g600); border: 1px solid var(--g200); }
-
-/* ── RESULTS: RANKING PODIUM ── */
-.podium { display: flex; gap: 12px; margin-bottom: 32px; align-items: flex-end; flex-wrap: wrap; }
-.podium-card { flex: 1; min-width: 140px; background: #fff; border: 1px solid var(--g200); border-radius: 14px; padding: 20px 16px; text-align: center; position: relative; }
-.podium-card.rank-1 { border-color: var(--black); border-width: 2px; background: var(--black); color: #fff; }
-.podium-rank { font-size: 11px; font-family: var(--mono); color: var(--g500); margin-bottom: 6px; }
-.podium-card.rank-1 .podium-rank { color: rgba(255,255,255,.5); }
-.podium-vendor { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
-.podium-score { font-size: 30px; font-weight: 700; font-family: var(--mono); margin-bottom: 4px; }
-.podium-card.rank-1 .podium-score { color: #fff; }
-.podium-card:not(.rank-1) .podium-score { color: var(--black); }
-.podium-rec { font-size: 18px; margin-bottom: 6px; }
-.podium-votes { font-size: 11px; color: var(--g500); }
-.podium-card.rank-1 .podium-votes { color: rgba(255,255,255,.5); }
-
-/* ── RESULTS: FILTER BAR ── */
-.filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-.filter-bar select { border: 1px solid var(--g200); border-radius: 8px; padding: 6px 10px; font-size: 12px; color: var(--black); background: #fff; outline: none; }
-.filter-bar select:focus { border-color: var(--black); }
-
-/* ── RESULTS: INDIVIDUAL TABLE ── */
-.ind-wrap { overflow-x: auto; margin-bottom: 32px; }
-.ind-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 700px; }
-.ind-table th { background: var(--black); color: #fff; padding: 8px 12px; text-align: left; font-weight: 500; white-space: nowrap; font-size: 11px; }
-.ind-table th.c { text-align: center; }
-.ind-table td { padding: 8px 12px; border-bottom: 1px solid var(--g100); vertical-align: middle; }
-.ind-table tr:hover td { background: var(--g50); }
-.ind-table .grp-row td { background: var(--g100); font-weight: 600; font-size: 10px; font-family: var(--mono); letter-spacing: 1px; text-transform: uppercase; color: var(--g500); padding: 5px 12px; }
-.sc-cell { text-align: center; font-weight: 600; font-family: var(--mono); }
-.hi { color: #15803d; } .mi { color: #b45309; } .lo { color: #b91c1c; } .na { color: #ccc; font-weight: 400; }
-.stars-xs { display: flex; gap: 1px; justify-content: center; }
-.s1 { font-size: 10px; color: var(--black); } .s0 { font-size: 10px; color: #e8e8e8; }
-
-/* ── RESULTS: AGGREGATED TABLE ── */
-.agg-wrap { overflow-x: auto; }
-.agg-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.agg-table th { background: var(--black); color: #fff; padding: 9px 13px; text-align: left; font-weight: 500; white-space: nowrap; }
-.agg-table th.vc { text-align: center; min-width: 100px; }
-.agg-table td { padding: 9px 13px; border-bottom: 1px solid var(--g100); vertical-align: middle; }
-.agg-table tr:hover td { background: var(--g50); }
-.agg-table .gr td { background: var(--g100); font-weight: 600; font-size: 10px; font-family: var(--mono); letter-spacing: 1px; text-transform: uppercase; color: var(--g500); padding: 6px 13px; }
-.agg-table .tot td { background: var(--black) !important; color: #fff; font-weight: 700; border: none; }
-.agg-table .rnk td { background: var(--g50); }
-.wbadge { font-family: var(--mono); font-size: 10px; color: var(--g500); background: var(--g100); padding: 1px 5px; border-radius: 4px; margin-left: 5px; }
-
-/* ── TABS INSIDE RESULTS ── */
-.sub-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--g200); margin-bottom: 28px; }
-.sub-tab { padding: 10px 18px; background: none; border-bottom: 2px solid transparent; font-size: 13px; font-weight: 500; color: var(--g500); transition: all .15s; }
-.sub-tab:hover { color: var(--black); }
-.sub-tab.active { color: var(--black); border-bottom-color: var(--black); }
-.sub-panel { display: none; } .sub-panel.active { display: block; }
-
-@media(max-width:600px){
-  .nav-tab { padding: 0 10px; font-size: 12px; }
-  .page, .page-wide { padding: 28px 16px; }
-  .form-hdr { padding: 9px 16px; }
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#0a0a0a;--white:#fff;--g50:#fafafa;--g100:#f5f5f5;--g200:#ebebeb;--g500:#888;--g600:#666;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--high:#16a34a;--mid:#d97706;--low:#dc2626}
+body{font-family:var(--font);background:var(--g50);color:var(--black);min-height:100vh}
+button{font-family:var(--font);cursor:pointer;border:none}
+.nav{background:var(--black);padding:0 28px;position:sticky;top:0;z-index:100}
+.nav-inner{display:flex;align-items:center;flex-wrap:wrap;gap:0}
+.nav-brand{font-size:13px;font-weight:600;color:#fff;padding:16px 0;white-space:nowrap;margin-right:20px}
+.nav-brand span{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.4);margin-left:6px}
+.nav-tabs{display:flex}
+.nav-tab{height:52px;padding:0 15px;background:none;border-bottom:2px solid transparent;font-size:13px;font-weight:500;color:rgba(255,255,255,.5);transition:all .15s;white-space:nowrap}
+.nav-tab:hover{color:#fff}
+.nav-tab.active{color:#fff;border-bottom-color:#fff}
+.nav-right{display:flex;align-items:center;gap:6px;padding:8px 0;margin-left:auto;flex-wrap:wrap}
+.rpill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border-radius:20px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,.7)}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.screen{display:none}.screen.active{display:block}
+.page{max-width:1080px;margin:0 auto;padding:32px 24px}
+.card{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:20px;margin-bottom:20px}
+.card-title{font-size:13px;font-weight:600;margin-bottom:16px}
+.podium{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;align-items:flex-end}
+.pcard{flex:1;min-width:110px;border-radius:14px;padding:18px 14px;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s;border:1px solid var(--g200);background:#fff}
+.pcard:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.pcard.r1{background:var(--black);border-color:var(--black)}
+.pcard .rank{font-size:10px;font-family:var(--mono);margin-bottom:6px}
+.pcard.r1 .rank,.pcard.r1 .vn,.pcard.r1 .votes{color:rgba(255,255,255,.45)}
+.pcard .vn{font-size:13px;font-weight:700;margin-bottom:10px}
+.pcard .sc{font-size:30px;font-weight:700;font-family:var(--mono);margin-bottom:6px}
+.pcard.r1 .sc{color:#fff}
+.pcard .votes{font-size:10px}
+.sbadge{display:inline-block;border-radius:6px;padding:2px 8px;font-weight:700;font-size:12px;color:#fff}
+.sh{background:var(--high)}.sm{background:var(--mid)}.sl{background:var(--low)}.sn{background:var(--g200);color:var(--g600)}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:var(--black);color:#fff;padding:8px 12px;text-align:left;font-weight:500;white-space:nowrap}
+.tbl th.c{text-align:center}
+.tbl td{padding:8px 12px;border-bottom:1px solid var(--g100);vertical-align:middle}
+.tbl tr:hover td{background:var(--g50)}
+.tbl .gr td{background:var(--g100);font-size:10px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--g500);padding:5px 12px;font-weight:600}
+.tbl .tot td{background:var(--black)!important;color:#fff;font-weight:700;border:none;font-family:var(--mono)}
+.tbl .tot td.c{font-size:14px}
+.filter-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px}
+.pill{border-radius:20px;padding:6px 14px;font-size:12px;font-weight:500;transition:all .15s;border:1px solid var(--g200);background:#fff;color:var(--g600)}
+.pill:hover{border-color:var(--black);color:var(--black)}
+.pill.active{background:var(--black);color:#fff;border-color:var(--black)}
+.pbar-wrap{margin-bottom:12px}
+.pbar-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+.pbar{background:var(--g100);border-radius:6px;height:8px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:6px;transition:width .5s}
+.hc{text-align:center;padding:7px 8px!important}
+@media(max-width:600px){.nav-right{display:none}.page{padding:20px 14px}.pcard{min-width:90px}}
 </style>
 </head>
 <body>
-
 <nav class="nav">
-  <div class="nav-logo">Qonto DAM <span>2026</span></div>
-  <button class="nav-tab active"  onclick="showTab('rate')">⭐ Rate Vendors</button>
-  <button class="nav-tab"         onclick="showTab('results')">📊 Results</button>
+  <div class="nav-inner">
+    <div class="nav-brand">DAM Results <span>2026</span></div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showTab('ranking')">🏆 Ranking</button>
+      <button class="nav-tab" onclick="showTab('vendor')">📊 By vendor</button>
+      <button class="nav-tab" onclick="showTab('reviewer')">👤 By reviewer</button>
+      <button class="nav-tab" onclick="showTab('matrix')">🗂 Full matrix</button>
+    </div>
+    <div class="nav-right" id="pills"></div>
+  </div>
 </nav>
-
-<!-- ══════════ TAB 1 — RATE ══════════ -->
-<div class="screen active" id="tab-rate">
-  <div id="s-entry"><div class="page">
-    <div class="eyebrow">Step 1 of 3</div>
-    <h1 class="hero">Who are you?</h1>
-    <p class="sub" style="margin-bottom:28px">Select your name to access your personalised rating form.</p>
-    <div id="revList"></div>
-  </div></div>
-  <div id="s-vendor" style="display:none"><div class="page">
-    <div id="vGreeting"></div><div id="vList"></div>
-  </div></div>
-  <div id="s-rating" style="display:none">
-    <div class="form-hdr"><div class="form-hdr-inner">
-      <div><div style="font-weight:600;font-size:14px" id="fhVendor"></div><div style="font-size:11px;color:var(--g500)" id="fhProg"></div></div>
-      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0"></div></div>
-      <a id="fhRfpLink" href="#" target="_blank" style="display:none;background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:5px 11px;font-size:12px;color:var(--g600);text-decoration:none;white-space:nowrap">📄 RFP</a>
-      <button class="back-btn" onclick="goVendors()">← Back</button>
-    </div></div>
-    <div class="page">
-      <div class="gtabs" id="gTabs"></div>
-      <div id="cCards"></div>
-      <div class="arrows" id="navArrows"></div>
-      <div id="overallSec" style="display:none">
-        <div class="overall-box">
-          <div style="font-weight:600;font-size:14px;margin-bottom:12px">Overall assessment</div>
-          <div style="font-size:12px;color:var(--g500);margin-bottom:9px">Would you recommend <span id="ovVendor"></span>?</div>
-          <div class="rec-row">
-            <button class="rec-btn off" id="rYes"   onclick="setRec('Yes')">✅ Yes</button>
-            <button class="rec-btn off" id="rMaybe" onclick="setRec('Maybe')">🤔 Maybe</button>
-            <button class="rec-btn off" id="rNo"    onclick="setRec('No')">❌ No</button>
-          </div>
-          <div style="font-size:12px;color:var(--g500);margin-bottom:7px">Key comment (optional)</div>
-          <textarea class="cmt-area" id="cmtArea" rows="3" placeholder="Strengths, concerns, open questions…"></textarea>
-        </div>
-        <button class="submit-btn" id="subBtn" onclick="submitRating()" disabled>
-          <span id="subLabel">Submit ratings</span>
-          <div class="spinner" id="subSpinner"></div>
-        </button>
-        <div class="info info-gray" style="font-size:12px;margin-bottom:40px">⚡ Ratings save to Google Sheets and appear instantly in the Results tab.</div>
-      </div>
-    </div>
-  </div>
-  <div id="s-success" style="display:none">
-    <div class="success-wrap"><div style="max-width:400px;width:100%;text-align:center">
-      <div style="font-size:44px;margin-bottom:14px">✓</div>
-      <div style="font-size:22px;font-weight:600;margin-bottom:8px">Saved!</div>
-      <p style="color:var(--g500);font-size:14px;margin-bottom:26px">Ratings for <strong id="succVendor"></strong> are in the sheet.</p>
-      <button style="background:var(--black);color:#fff;border-radius:11px;padding:12px 24px;font-size:14px;font-weight:500" id="nextVBtn" onclick="goVendors()">Rate another vendor →</button>
-      <p id="allDoneMsg" style="display:none;color:var(--g500);font-size:13px;margin-top:14px">You've rated all vendors. Thank you!</p>
-    </div></div>
-  </div>
-</div>
-
-<!-- ══════════ TAB 3 — RESULTS ══════════ -->
-<div class="screen" id="tab-results">
-  <div class="page-wide">
-    <div class="eyebrow">Live results</div>
-    <h1 class="hero" style="margin-bottom:6px">Results</h1>
-
-    <!-- Google Sheets setup -->
-    <div id="sheetSetup"></div>
-
-    <div class="sub-tabs">
-      <button class="sub-tab active" onclick="showSubTab('ranking', this)">🏆 Final Ranking</button>
-      <button class="sub-tab" onclick="showSubTab('individual', this)">👤 Individual Responses</button>
-      <button class="sub-tab" onclick="showSubTab('aggregated', this)">📊 Aggregated Scorecard</button>
-    </div>
-
-    <!-- RANKING -->
-    <div class="sub-panel active" id="panel-ranking">
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap">
-        <button onclick="loadResults()" style="background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:6px 13px;font-size:12px;font-weight:500">↻ Refresh</button>
-        <span style="font-size:12px;color:var(--g500)">Weighted average · scores 1–5 · updates live from Google Sheets</span>
-      </div>
-      <div id="podiumWrap" style="margin-bottom:28px"></div>
-      <div id="rankTableWrap"></div>
-    </div>
-
-    <!-- INDIVIDUAL -->
-    <div class="sub-panel" id="panel-individual">
-      <div class="filter-bar">
-        <select id="filterReviewer" onchange="renderIndividual()">
-          <option value="">All reviewers</option>
-        </select>
-        <select id="filterVendor" onchange="renderIndividual()">
-          <option value="">All vendors</option>
-        </select>
-        <button onclick="loadResults()" style="background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:500">↻ Refresh</button>
-        <button onclick="exportIndividualCSV()" style="background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:500">⬇ Download CSV</button>
-      </div>
-      <div class="ind-wrap" id="indWrap"></div>
-    </div>
-
-    <!-- AGGREGATED -->
-    <div class="sub-panel" id="panel-aggregated">
-      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
-        <button onclick="loadResults()" style="background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:6px 13px;font-size:12px;font-weight:500">↻ Refresh</button>
-        <button onclick="exportAggregatedCSV()" style="background:var(--g100);border:1px solid var(--g200);border-radius:7px;padding:6px 13px;font-size:12px;font-weight:500">⬇ Download CSV</button>
-        <span style="font-size:12px;color:var(--g500)"><span style="color:#15803d">●</span> 4–5 &nbsp;<span style="color:#b45309">●</span> 3–4 &nbsp;<span style="color:#b91c1c">●</span> 1–3</span>
-      </div>
-      <div class="agg-wrap" id="aggWrap"></div>
-    </div>
-  </div>
-</div>
+<div class="screen active" id="tab-ranking"><div class="page" id="rankingContent"></div></div>
+<div class="screen" id="tab-vendor"><div class="page"><div class="filter-row" id="vendorPills"></div><div id="vendorContent"></div></div></div>
+<div class="screen" id="tab-reviewer"><div class="page"><div class="filter-row" id="reviewerPills"></div><div id="reviewerContent"></div></div></div>
+<div class="screen" id="tab-matrix"><div class="page" id="matrixContent"></div></div>
 
 <script>
-// ══════════════════ CONFIG — set your Apps Script URL here ══════════════════
-let SHEET_URL = localStorage.getItem('dam_sheet_url') || '';
-
-// ══════════════════ DATA ══════════════════
-const VENDORS = [
-  { name:'Canto',
-    rfpUrl:'https://www.notion.so/qonto/Cockpit-Stream-1-DAM-RFP-34b31ee4c69681f58ac2f93de39b3a5b#37531ee4c69680378d1bf1cb2463a224' },
-  { name:'Cloudinary',
-    rfpUrl:'https://www.notion.so/qonto/Cockpit-Stream-1-DAM-RFP-34b31ee4c69681f58ac2f93de39b3a5b#37331ee4c69680d0a3b9fdfe50c1acd4' },
-  { name:'Frontify',
-    rfpUrl:'https://www.notion.so/qonto/Cockpit-Stream-1-DAM-RFP-34b31ee4c69681f58ac2f93de39b3a5b#37331ee4c69680929ff5f9065978d1f8' },
-  { name:'Smartsheet / Brandfolder',
-    rfpUrl:'https://www.notion.so/qonto/Cockpit-Stream-1-DAM-RFP-34b31ee4c69681f58ac2f93de39b3a5b#37531ee4c6968043860153b854f41447' },
-  { name:'Aprimo',
-    rfpUrl:'https://www.notion.so/qonto/Cockpit-Stream-1-DAM-RFP-34b31ee4c69681f58ac2f93de39b3a5b#37331ee4c69680d2aa66c73af5e88d90' },
-  { name:'Bynder',
-    rfpUrl:'https://www.notion.so/qonto/Cockpit-Stream-1-DAM-RFP-34b31ee4c69681f58ac2f93de39b3a5b#37531ee4c6968037a895eb67cb4e88ba' },
-  { name:'Qontent (internal)',
-    rfpUrl:null },
-];
-
-const GRP_DESC = {
-  Functional:  'Core DAM features any user interacts with — search, permissions, lifecycle management, and overall UX quality.',
-  Design:      'Capabilities specific to creative & design workflows — file formats, Figma integration, bulk ingest, and migration support.',
-  Performance: 'How well the platform connects creative assets to performance data and campaign outcomes.',
-  Technical:   'API quality, webhook architecture, AI/LLM compatibility, and security — assessed from documentation and proposal.',
-  Commercial:  'Pricing value, SLA quality, and contractual terms — assessed from commercial offer.',
-};
-
-const CRITERIA = {
-  // ── FUNCTIONAL ──
-  F1: { label:'Search & filters',     desc:'Advanced search, saved views',           pri:'Must Have',  grp:'Functional',  w:1,
-        guidance:'Based on their RFP response and screenshots/demo shown: does their search architecture support filters granular enough for our taxonomy (market, format, status, team)? Judge on how they describe search in their proposal — do they show real examples or just list features?' },
-  F2: { label:'AI semantic search',   desc:'AI-powered asset discovery',             pri:'Should Have',grp:'Functional',  w:0.8,
-        guidance:'Does their proposal clearly explain how their AI search works and what it\'s trained on? Judge on the quality of their explanation and any examples provided — vague claims of "AI-powered search" without substance should score low.' },
-  F3: { label:'Asset lifecycle',      desc:'Draft → Approved → Live → Expired',     pri:'Must Have',  grp:'Functional',  w:1,
-        guidance:'Does their proposed workflow map to ours (Draft → Approved → Live → Expired)? Judge on whether non-Design teams could understand and operate the status system based on what\'s described — not just whether the feature exists.' },
-  F4: { label:'Granular permissions', desc:'Asset-level + folder-level per team',   pri:'Must Have',  grp:'Functional',  w:1,
-        guidance:'Does their permissions model allow us to map our real org structure (Brand Design edit, Paid Acquisition read-only, external agency scoped access) without workarounds? Judge on the specificity of their answer — generic "role-based access" is not enough.' },
-  F5: { label:'Metadata schema',      desc:'Rich, customisable metadata',           pri:'Must Have',  grp:'Functional',  w:1,
-        guidance:'Can a non-technical admin define, rename and remove custom metadata fields per asset type without engineering support? Judge on whether they describe this as self-serve or as a setup they configure for us.' },
-  F6: { label:'Taxonomy governance',  desc:'Controlled vocabularies',               pri:'Must Have',  grp:'Functional',  w:1,
-        guidance:'Can controlled vocabularies be locked so users can\'t free-type and pollute the taxonomy? Judge on whether their proposal describes an admin-controlled system or relies on user discipline.' },
-  F7: { label:'AI auto-tagging',      desc:'Auto-tagging quality on ingest',        pri:'Must Have',  grp:'Functional',  w:1,
-        guidance:'Based on their proposal: how specific is their AI tagging to our content types (ads, brand assets, video)? Judge on whether they describe tagging quality and customisability, or just claim auto-tagging exists.' },
-  F8: { label:'Version control',      desc:'Asset history & versioning',            pri:'Should Have',grp:'Functional',  w:0.8,
-        guidance:'Is version history accessible to non-Design users (Growth, PMM) or locked behind a designer workflow? Judge on how they describe the feature and who it\'s designed for in their proposal.' },
-  F9: { label:'Brand portal',         desc:'Public-facing brand module',            pri:'Could Have', grp:'Functional',  w:0.5,
-        guidance:'Is this a real module with customisable access for external partners, or just a shared folder with a different name? Judge on the depth of their description and any screenshots provided.' },
-  F11:{ label:'UX quality',           desc:'Ease of use, interface quality',        pri:'—',          grp:'Functional',  w:0.9,
-        guidance:'Based on screenshots, recorded demos, or walkthrough provided: would a non-technical Qonto employee find and use an asset on day 1 without training? Judge on interface clarity from what they\'ve shared — penalise if they couldn\'t show it.' },
-  // ── DESIGN ──
-  D2: { label:'Figma plugin',         desc:'Figma plugin or direct integration',    pri:'Should Have',grp:'Design',      w:0.8,
-        guidance:'Does their Figma plugin allow publishing with metadata, or is it just a browse-and-insert tool? Judge on the depth of their description and any documentation provided — a plugin that doesn\'t carry metadata over is nearly useless for us.' },
-  D3: { label:'Figma sync',           desc:'Two-way Figma connector',               pri:'Could Have', grp:'Design',      w:0.5,
-        guidance:'Is this truly bidirectional (DAM updates when Figma updates) or just a one-way publish? Judge on the technical specificity of their answer — "Figma integration" without detail should score low.' },
-  D6: { label:'Migration support',    desc:'Onboarding & migration quality',        pri:'—',          grp:'Design',      w:0.9,
-        guidance:'What exactly do they include in migration support — do they provide tooling, a dedicated resource, or just documentation? Judge on the concreteness of their migration offer and whether it covers our three sources (Drive, Frame.io, Figma).' },
-  // ── PERFORMANCE ──
-  P1: { label:'Performance data',     desc:'Performance data linked to each asset', pri:'Must Have',  grp:'Performance', w:1,
-        guidance:'Is performance data (CTR, spend, conversion) linked to assets via a native integration or a manual process we\'d have to maintain? Judge on whether they describe a real data pipeline or a workaround in their proposal.' },
-  P2: { label:'Media data plug',      desc:'Plug media data for paid acquisition',  pri:'Must Have',  grp:'Performance', w:1,
-        guidance:'Do they have a documented, working integration with Motion or equivalent paid creative analytics? Judge on whether they can name the integration and explain how it works — not just say it\'s possible via API.' },
-  P3: { label:'Asset ↔ landing page', desc:'Asset linked to landing page + tracking',pri:'Should Have',grp:'Performance',w:0.8,
-        guidance:'Can assets be linked to landing pages with trackable URLs in their system? Judge on whether this is a described feature with examples, or something they\'re suggesting could be built.' },
-  P4: { label:'Usage analytics',      desc:'Internal usage tracking & analytics',   pri:'Should Have',grp:'Performance', w:0.8,
-        guidance:'Does their analytics go beyond download counts — can we see who used an asset, in which campaign, and when? Judge on the depth of analytics described in their proposal.' },
-  // ── TECHNICAL ──
-  T1: { label:'API quality',          desc:'Clean, documented API',                 pri:'Must Have',  grp:'Technical',   w:1,
-        guidance:'Review their API documentation (linked or provided in the RFP). Is it asset-retrieval-first, well-structured, and could Seb build a Claude integration on it in a sprint? Judge on documentation quality, rate limit transparency, and endpoint coverage — not just the claim of having an API.' },
-  T2: { label:'Webhooks',             desc:'Webhook / event-driven architecture',   pri:'Must Have',  grp:'Technical',   w:1,
-        guidance:'Do they describe a robust, documented webhook system with real event triggers (e.g. asset approved, asset expired)? Judge on specificity — "we support webhooks" without documentation or examples scores low.' },
-  T3: { label:'AI/LLM compatibility', desc:'Claude can pull assets via API',        pri:'Must Have',  grp:'Technical',   w:1,
-        guidance:'Based on their API documentation: can Claude query and retrieve assets programmatically with structured filters — or is the API primarily built for UI interactions? Judge on whether the API returns machine-readable, filterable data.' },
-  T7: { label:'Security standards',   desc:'SOC2 Type II or equivalent',            pri:'Must Have',  grp:'Technical',   w:1,
-        guidance:'Do they provide SOC2 Type II certification (not just Type I) or equivalent? Judge on what they actually submit — certification date matters, an expired or Type I cert is not sufficient for Qonto\'s compliance requirements.' },
-  T8: { label:'Scalability & uptime', desc:'Reliability and uptime SLA',            pri:'Must Have',  grp:'Technical',   w:1,
-        guidance:'Do they provide verifiable uptime history and infrastructure evidence at our scale? Judge on whether their SLA is backed by real data (uptime reports, client references at scale) or is just a contractual clause.' },
-  T9: { label:'Rights management',    desc:'Rights management module',              pri:'Could Have', grp:'Technical',   w:0.5,
-        guidance:'Is rights management a real workflow with expiry enforcement and geographic restrictions — or just a metadata field we\'d police manually? Judge on whether they describe automated enforcement or a manual process.' },
-  // ── COMMERCIAL ──
-  C1: { label:'Pricing',              desc:'Competitive and transparent pricing',   pri:'—',          grp:'Commercial',  w:1,
-        guidance:'Given the full commercial offer: is the price fair relative to what\'s delivered and to the other shortlisted vendors? Judge on total cost of ownership — headline price, per-seat cost, storage overage, and what\'s billed as an add-on.' },
-  C3: { label:'SLA coverage',         desc:'Technical + operational + support SLAs',pri:'Must Have',  grp:'Commercial',  w:1,
-        guidance:'Do their SLAs cover all three dimensions (technical uptime, incident response, support response) with defined response times and escalation paths? Judge on whether these are specific commitments or broad statements.' },
-  C4: { label:'SLA penalties',        desc:'Penalties + termination rights on breach',pri:'Must Have',grp:'Commercial',  w:1,
-        guidance:'Are the penalty clauses (service credits, termination rights) proportionate and actually a deterrent? Judge on whether the penalty structure would matter to them commercially, or is too small to change their behaviour.' },
-  C5: { label:'Liability cap',        desc:'Min 3× annual fees; breaches carved out',pri:'Must Have',grp:'Commercial',  w:1,
-        guidance:'Is the liability cap at minimum 3× annual fees with data breaches uncapped? Judge on their counter-proposal — anything below this threshold or with a capped data breach clause is a dealbreaker unless Polina approves an exception.' },
-  C12:{ label:'References quality',   desc:'Strong references in banking / fintech',pri:'—',          grp:'Commercial',  w:0.9,
-        guidance:'Can they provide at least one reference from financial services or fintech at our scale who can speak to compliance, multi-market operations, and high asset volume? Judge on relevance of the reference — a retail or B2C reference is not equivalent.' },
-};
-
+// ══════════════════ STATIC DATA ══════════════════
+const VENDORS = ['Canto','Cloudinary','Frontify','Smartsheet / Brandfolder','Aprimo','Bynder','Qontent (internal)'];
+const VS = ['Canto','Cloudinary','Frontify','Smartsheet','Aprimo','Bynder','Qontent'];
+const GROUPS = ['Functional','Design','Performance','Technical','Commercial'];
 const GRP_W = {Functional:30,Design:20,Performance:20,Technical:20,Commercial:10};
 const GRP_I = {Functional:'◈',Design:'◇',Performance:'◉',Technical:'◎',Commercial:'◫'};
-const SL    = ['','Poor','Fair','Good','Great','Excellent'];
-const PRI_S = {'Must Have':'background:#0a0a0a;color:#fff','Should Have':'background:#f0f0f0;color:#0a0a0a','Could Have':'background:#f8f8f8;color:#aaa','—':'background:#f8f8f8;color:#ccc'};
 
-const REVIEWERS = {
-  hortense:{name:'Hortense',      role:'Growth Programs Manager',           criteria:['F1','F2','F3','F4','F6','D6','P1','P3','P4','C1','C12']},
-  julie:   {name:'Julie R',       role:'Brand, Comms & Creativity Director',criteria:['F1','F2','F3','F4','F9','F11','T9']},
-  didier:  {name:'Didier H',      role:'Design Director',                   criteria:['F1','F2','F5','F8','F11','D2','D3']},
-  carla:   {name:'Carla',         role:'Head of Brand Design',              criteria:['F1','F2','F3','F4','F5','F6','F7','F8','F9','F11','D2','D3','T9']},
-  soline:  {name:'Soline A',      role:'Design Ops & Enablement',           criteria:['F1','F3','F4','F5','F6','F7','F8','F11','D2','D6']},
-  alex:    {name:'Alex Laloo',    role:'Head of Growth Ops',                criteria:['P1','P2','P4','T1','T2']},
-  vincent: {name:'Vincent Martin',role:'Head of Growth Programs',           criteria:['P1','P2','P3','P4']},
-  teresa:  {name:'Teresa',        role:'Head of Paid Acquisition',          criteria:['P1','P2','P3','P4']},
-  seb:     {name:'Seb',           role:'Website Engineer',                  criteria:['T1','T2','T3','T8']},
-  aymeric: {name:'Aymeric',       role:'CTO',                               criteria:['T1','T2','T3','T7','T8','C3']},
-  polina:  {name:'Polina',        role:'Procurement / Legal',               criteria:['C1','C3','C4','C5','C12']},
+const RC = {Hortense:'#6366f1',Teresa:'#f59e0b',Soline:'#10b981',Eduardo:'#0ea5e9',Seb:'#84cc16'};
+
+// Raw criterion scores: DATA[reviewer][criterion] = {vendor: score}
+const DATA = {
+  Hortense: {
+    total: {Canto:3.48,Cloudinary:3.63,Frontify:3.60,'Smartsheet / Brandfolder':3.53,Aprimo:4.38,Bynder:4.38},
+    rec:   {Canto:'Maybe',Cloudinary:'Yes',Frontify:'Yes','Smartsheet / Brandfolder':'Maybe',Aprimo:'Yes',Bynder:'Yes'},
+    grp:   {Functional:{Canto:4.42,Cloudinary:5.00,Frontify:4.25,'Smartsheet / Brandfolder':4.32,Aprimo:4.79,Bynder:4.58},Design:{Canto:4.00,Cloudinary:4.00,Frontify:2.00,'Smartsheet / Brandfolder':4.00,Bynder:5.00},Performance:{Canto:1.31,Cloudinary:2.54,Frontify:3.54,'Smartsheet / Brandfolder':3.15,Aprimo:3.46,Bynder:3.15},Commercial:{Canto:4.00,Cloudinary:1.00,Frontify:5.00,'Smartsheet / Brandfolder':1.00,Aprimo:5.00,Bynder:5.00}},
+    crit: {
+      'Search & filters':     {Canto:5,Cloudinary:5,Frontify:5,'Smartsheet / Brandfolder':4,Aprimo:5,Bynder:5},
+      'AI semantic search':   {Canto:4,Cloudinary:5,Frontify:3,'Smartsheet / Brandfolder':3,Aprimo:5,Bynder:5},
+      'Asset lifecycle':      {Canto:5,Cloudinary:5,Frontify:5,'Smartsheet / Brandfolder':5,Aprimo:4,Bynder:3},
+      'Granular permissions': {Canto:5,Cloudinary:5,Frontify:5,Aprimo:5,Bynder:5},
+      'Taxonomy governance':  {Canto:3,Cloudinary:5,Frontify:3,'Smartsheet / Brandfolder':5,Aprimo:5,Bynder:5},
+      'Migration support':    {Canto:4,Cloudinary:4,Frontify:2,'Smartsheet / Brandfolder':4,Bynder:5},
+      'Performance data':     {Canto:1,Cloudinary:1,Frontify:2,'Smartsheet / Brandfolder':1,Aprimo:1,Bynder:1},
+      'Asset ↔ landing page': {Canto:1,Cloudinary:3,Frontify:4,'Smartsheet / Brandfolder':4,Aprimo:5,Bynder:5},
+      'Usage analytics':      {Canto:2,Cloudinary:4,Frontify:5,'Smartsheet / Brandfolder':5,Aprimo:5,Bynder:4},
+      'References quality':   {Canto:4,Cloudinary:1,Frontify:5,'Smartsheet / Brandfolder':1,Aprimo:5,Bynder:5},
+    }
+  },
+  Teresa: {
+    total: {Canto:1.83,Cloudinary:1.00,Frontify:2.22,'Smartsheet / Brandfolder':3.44,Aprimo:2.50,Bynder:2.78,'Qontent (internal)':3.56},
+    rec:   {Canto:'No',Cloudinary:'No',Frontify:'Maybe','Smartsheet / Brandfolder':'Yes',Aprimo:'Maybe',Bynder:'Maybe','Qontent (internal)':'Yes'},
+    grp:   {Performance:{Canto:1.83,Cloudinary:1.00,Frontify:2.22,'Smartsheet / Brandfolder':3.44,Aprimo:2.50,Bynder:2.78,'Qontent (internal)':3.56}},
+    crit: {
+      'Performance data':     {Canto:4,Cloudinary:1,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:3,'Qontent (internal)':4},
+      'Media data plug':      {Canto:1,Cloudinary:1,Frontify:2,'Smartsheet / Brandfolder':2,Aprimo:3,Bynder:3,'Qontent (internal)':4},
+      'Asset ↔ landing page': {Canto:1,Cloudinary:1,Frontify:1,'Smartsheet / Brandfolder':4,Aprimo:3,Bynder:3,'Qontent (internal)':4},
+      'Usage analytics':      {Canto:1,Cloudinary:1,Frontify:4,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:2,'Qontent (internal)':2},
+    }
+  },
+  Soline: {
+    total: {Canto:3.72,Cloudinary:2.74,Frontify:2.74,'Smartsheet / Brandfolder':3.98,Aprimo:1.87,Bynder:1.98,'Qontent (internal)':3.16},
+    rec:   {Canto:'No',Cloudinary:'No',Frontify:'No','Smartsheet / Brandfolder':'Maybe',Aprimo:'No',Bynder:'No','Qontent (internal)':'Maybe'},
+    grp:   {Functional:{Canto:3.88,Cloudinary:2.26,Frontify:2.26,'Smartsheet / Brandfolder':4.27,Aprimo:1.78,Bynder:2.27,'Qontent (internal)':3.26},Design:{Canto:3.47,Cloudinary:3.47,Frontify:3.47,'Smartsheet / Brandfolder':3.53,Aprimo:2.00,Bynder:1.53,'Qontent (internal)':3.00}},
+    crit: {
+      'Search & filters':     {Canto:4,Cloudinary:3,Frontify:2,'Smartsheet / Brandfolder':5,Aprimo:2,Bynder:3,'Qontent (internal)':4},
+      'Asset lifecycle':      {Canto:5,Cloudinary:2,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:3,'Qontent (internal)':2},
+      'Granular permissions': {Canto:4,Cloudinary:2,Frontify:3,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:2,'Qontent (internal)':2},
+      'Metadata schema':      {Canto:3,Cloudinary:2,Frontify:3,'Smartsheet / Brandfolder':5,Aprimo:2,Bynder:2,'Qontent (internal)':4},
+      'Taxonomy governance':  {Canto:4,Cloudinary:3,Frontify:2,'Smartsheet / Brandfolder':5,Aprimo:1,Bynder:2,'Qontent (internal)':4},
+      'AI auto-tagging':      {Canto:4,Cloudinary:2,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:3,Bynder:3,'Qontent (internal)':4},
+      'Version control':      {Canto:4,Cloudinary:2,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:1,Bynder:2,'Qontent (internal)':3},
+      'UX quality':           {Canto:3,Cloudinary:2,Frontify:2,'Smartsheet / Brandfolder':3,Aprimo:1,Bynder:1,'Qontent (internal)':3},
+      'Figma plugin':         {Canto:4,Cloudinary:4,Frontify:4,'Smartsheet / Brandfolder':3,Aprimo:2,Bynder:1,'Qontent (internal)':3},
+      'Migration support':    {Canto:3,Cloudinary:3,Frontify:3,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:2,'Qontent (internal)':3},
+    }
+  },
+  Eduardo: {
+    total: {Canto:2.65,Cloudinary:2.98,Frontify:1.58,'Smartsheet / Brandfolder':3.39,Aprimo:1.65,Bynder:3.08,'Qontent (internal)':4.55},
+    rec:   {Canto:'No',Cloudinary:'Maybe',Frontify:'No','Smartsheet / Brandfolder':'Yes',Aprimo:'No',Bynder:'Yes','Qontent (internal)':'Yes'},
+    grp:   {Functional:{Canto:2.18,Cloudinary:3.20,Frontify:1.97,'Smartsheet / Brandfolder':3.77,Aprimo:1.84,Bynder:3.70,'Qontent (internal)':4.24},Design:{Canto:2.00,Cloudinary:2.62,Frontify:1.00,'Smartsheet / Brandfolder':3.23,Aprimo:1.00,Bynder:2.23,'Qontent (internal)':5.00},Technical:{Canto:4.00,Cloudinary:3.00,Frontify:null,'Smartsheet / Brandfolder':3.00,Aprimo:2.00,Bynder:3.00}},
+    crit: {
+      'Search & filters':     {Canto:2,Cloudinary:3,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:4,'Qontent (internal)':4},
+      'AI semantic search':   {Canto:2,Cloudinary:4,Frontify:1,'Smartsheet / Brandfolder':2,Aprimo:2,Bynder:4,'Qontent (internal)':4},
+      'Asset lifecycle':      {Canto:3,Cloudinary:2,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:4,'Qontent (internal)':4},
+      'Granular permissions': {Canto:3,Cloudinary:3,Frontify:2,'Smartsheet / Brandfolder':5,Aprimo:2,Bynder:4,'Qontent (internal)':5},
+      'Metadata schema':      {Canto:2,Cloudinary:4,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:1,Bynder:4,'Qontent (internal)':4},
+      'Taxonomy governance':  {Canto:2,Cloudinary:4,Frontify:1,'Smartsheet / Brandfolder':4,Aprimo:1,Bynder:4,'Qontent (internal)':4},
+      'AI auto-tagging':      {Canto:2,Cloudinary:3,Frontify:1,'Smartsheet / Brandfolder':3,Aprimo:2,Bynder:3,'Qontent (internal)':4},
+      'Version control':      {Canto:2,Cloudinary:3,Frontify:1,'Smartsheet / Brandfolder':4,Aprimo:1,Bynder:3,'Qontent (internal)':5},
+      'Brand portal':         {Canto:3,Cloudinary:3,Frontify:5,'Smartsheet / Brandfolder':3,Aprimo:3,Bynder:4,'Qontent (internal)':3},
+      'UX quality':           {Canto:1,Cloudinary:3,Frontify:4,'Smartsheet / Brandfolder':4,Aprimo:3,Bynder:3,'Qontent (internal)':5},
+      'Figma plugin':         {Canto:2,Cloudinary:3,Frontify:1,'Smartsheet / Brandfolder':4,Aprimo:1,Bynder:3,'Qontent (internal)':5},
+      'Figma sync':           {Canto:2,Cloudinary:2,Frontify:1,'Smartsheet / Brandfolder':2,Aprimo:1,Bynder:1,'Qontent (internal)':5},
+      'Rights management':    {Canto:4,Cloudinary:3,Frontify:null,'Smartsheet / Brandfolder':3,Aprimo:2,Bynder:3},
+    }
+  },
+  Seb: {
+    total: {Canto:3.33,Cloudinary:4.75,Frontify:4.50,'Smartsheet / Brandfolder':3.67,Aprimo:4.00,Bynder:3.75,'Qontent (internal)':5.00},
+    rec:   {Canto:'No',Cloudinary:'Yes',Frontify:'Yes','Smartsheet / Brandfolder':'Maybe',Aprimo:'Yes',Bynder:'Maybe'},
+    grp:   {Technical:{Canto:3.33,Cloudinary:4.75,Frontify:4.50,'Smartsheet / Brandfolder':3.67,Aprimo:4.00,Bynder:3.75,'Qontent (internal)':5.00}},
+    crit: {
+      'API quality':          {Canto:3,Cloudinary:5,Frontify:5,'Smartsheet / Brandfolder':4,Aprimo:4,Bynder:5},
+      'Webhooks':             {Canto:5,Cloudinary:5,Frontify:5,'Smartsheet / Brandfolder':4,Aprimo:5,Bynder:5,'Qontent (internal)':5},
+      'AI/LLM compatibility': {Canto:2,Cloudinary:5,Frontify:4,'Smartsheet / Brandfolder':3,Aprimo:2,Bynder:2,'Qontent (internal)':5},
+      'Scalability & uptime': {Cloudinary:4,Frontify:4,Aprimo:5,Bynder:3},
+    }
+  }
 };
 
-// ══════════════════ LOCAL STATE ══════════════════
-let curReviewer=null, curVendor=null, curGroup=null, curRec=null;
-let allRows = []; // cached from sheet
+const REVIEWERS = Object.keys(DATA);
 
-function ls(){ try{return JSON.parse(localStorage.getItem('dam_v3')||'{}');}catch(e){return{};} }
-function lsSave(d){ localStorage.setItem('dam_v3',JSON.stringify(d)); }
-function getScore(r,v,c){ return ls()[`${r}:${v}:${c}`]||0; }
-function setScore(r,v,c,s){ const d=ls(); d[`${r}:${v}:${c}`]=s; lsSave(d); }
-function getNa(r,v,c){ return !!ls()[`${r}:${v}:${c}:na`]; }
-function setNa(r,v,c,val){ const d=ls(); if(val) d[`${r}:${v}:${c}:na`]=true; else delete d[`${r}:${v}:${c}:na`]; lsSave(d); }
-function getCritCmt(r,v,c){ return ls()[`${r}:${v}:${c}:cmt`]||''; }
-function setCritCmt(r,v,c,t){ const d=ls(); if(t) d[`${r}:${v}:${c}:cmt`]=t; else delete d[`${r}:${v}:${c}:cmt`]; lsSave(d); }
-function getRec(r,v){ return ls()[`${r}:${v}:_rec`]||null; }
-function setRecLS(r,v,x){ const d=ls(); d[`${r}:${v}:_rec`]=x; lsSave(d); }
-function getCmt(r,v){ return ls()[`${r}:${v}:_cmt`]||''; }
-function setCmtLS(r,v,x){ const d=ls(); d[`${r}:${v}:_cmt`]=x; lsSave(d); }
-function isDone(r,v){ return !!ls()[`${r}:${v}:_rec`]; }
-
-// ══════════════════ GOOGLE SHEETS ══════════════════
-function renderSheetSetup() {
-  const el = document.getElementById('sheetSetup');
-  if (!SHEET_URL) {
-    el.innerHTML = `<div class="setup-banner">
-      <h3>🔗 Connect to Google Sheets to see live results</h3>
-      <p>Paste your Google Apps Script Web App URL below. Follow the setup guide to get it (2 min).<br>
-      <a href="#" onclick="showSetupGuide()" style="color:#92400e;font-weight:600">How to set up Google Sheets →</a></p>
-      <div class="setup-row">
-        <input class="setup-input" id="sheetInput" placeholder="https://script.google.com/macros/s/…/exec" />
-        <button class="setup-save" onclick="saveSheetUrl()">Save</button>
-      </div>
-    </div>`;
-  } else {
-    el.innerHTML = `<div class="setup-ok">
-      <span>✓ Connected to Google Sheets</span>
-      <button onclick="clearSheetUrl()">Change URL</button>
-    </div>`;
-  }
+// ══════════════════ COMPUTED ══════════════════
+function avgTotals() {
+  return VENDORS.map((v,vi) => {
+    const scores = REVIEWERS.map(r => DATA[r].total?.[v]).filter(s => s!=null && !isNaN(s));
+    const avg = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : null;
+    const recs = REVIEWERS.map(r => DATA[r].rec?.[v]).filter(Boolean);
+    return {
+      vendor:v, short:VS[vi], avg, scores,
+      yes:recs.filter(r=>r==='Yes').length,
+      maybe:recs.filter(r=>r==='Maybe').length,
+      no:recs.filter(r=>r==='No').length,
+      recs
+    };
+  }).filter(v=>v.avg!==null).sort((a,b)=>b.avg-a.avg);
 }
 
-function saveSheetUrl() {
-  const v = document.getElementById('sheetInput').value.trim();
-  if (!v) return;
-  SHEET_URL = v;
-  localStorage.setItem('dam_sheet_url', v);
-  renderSheetSetup();
-  loadResults();
-}
-
-function clearSheetUrl() {
-  SHEET_URL = '';
-  localStorage.removeItem('dam_sheet_url');
-  renderSheetSetup();
-}
-
-function showSetupGuide() {
-  alert(`Google Apps Script setup (2 min):
-
-1. Go to script.google.com → New project
-2. Paste the Apps Script code (see README in GitHub repo)
-3. Click Deploy → New deployment → Web App
-4. Execute as: Me · Who has access: Anyone
-5. Copy the Web App URL and paste it here
-
-The script handles both POST (save ratings) and GET (read all ratings).`);
-}
-
-// Post a submission to the sheet
-async function postToSheet(payload) {
-  if (!SHEET_URL) return false;
-  try {
-    await fetch(SHEET_URL, {
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
-    });
-    return true;
-  } catch(e) { console.warn('Sheet POST error', e); return false; }
-}
-
-// Read all rows from the sheet
-async function fetchFromSheet() {
-  if (!SHEET_URL) return null;
-  try {
-    const r = await fetch(SHEET_URL + '?action=get', {mode:'cors'});
-    const data = await r.json();
-    return Array.isArray(data) ? data : null;
-  } catch(e) { console.warn('Sheet GET error', e); return null; }
-}
-
-// ══════════════════ NAV ══════════════════
-function showTab(t) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+t).classList.add('active');
-  // activate the button that called this by matching its onclick text
-  document.querySelectorAll('.nav-tab').forEach(b=>{ if(b.getAttribute('onclick')===`showTab('${t}')`) b.classList.add('active'); });
-  if(t==='results'){ renderSheetSetup(); loadResults(); }
-}
-
-function showSubTab(name, btn) {
-  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  if(btn) btn.classList.add('active');
-}
-
-// ══════════════════ TAB 1 ══════════════════
-function renderRFP() {
-  document.getElementById('rfpGrid').innerHTML = VENDORS.map(v=>`
-    <div class="rfp-card">
-      ${v.rfpUrl
-        ?`<a href="${v.rfpUrl}" target="_blank"><div class="rfp-icon" style="background:#f0fdf4">📑</div><div><div class="rfp-name">${v.name}</div><div class="rfp-meta">RFP Submission</div><span class="badge bg">✓ Available</span></div></a>`
-        :`<div class="rfp-card-inner"><div class="rfp-icon" style="background:var(--g100)">⏳</div><div><div class="rfp-name">${v.name}</div><div class="rfp-meta">RFP Submission</div><span class="badge br">Pending</span></div></div>`}
-    </div>`).join('');
-  document.getElementById('tlEl').innerHTML = TIMELINE.map((it,i)=>`
-    <div class="tl-row" style="${i===TIMELINE.length-1?'border:none':''}">
-      <div class="tl-date" style="${it.done||it.today?'color:var(--black);font-weight:600':''}">${it.date}</div>
-      <div class="tl-dot" style="background:${it.done||it.today?'var(--black)':'var(--g300)'}"></div>
-      <div class="tl-label" style="${it.done||it.today?'font-weight:600':'color:var(--g500)'}">
-        ${it.label}${it.today?' <span style="font-size:10px;font-family:var(--mono);background:var(--black);color:#fff;padding:1px 7px;border-radius:10px;margin-left:5px">TODAY</span>':''}
-      </div>
-    </div>`).join('');
-}
-
-// ══════════════════ TAB 2 — RATING ══════════════════
-function checkParam() {
-  const r = new URLSearchParams(location.search).get('reviewer');
-  if(r && REVIEWERS[r]){ curReviewer=r; showTab('rate'); goVendors(); }
-}
-
-function renderRevList() {
-  document.getElementById('revList').innerHTML = Object.entries(REVIEWERS).map(([k,r])=>{
-    const done = VENDORS.filter(v=>isDone(k,v.name)).length;
-    return `<button class="rev-btn" onclick="pickReviewer('${k}')">
-      <div><div class="rev-name">${r.name}</div><div class="rev-role">${r.role} · ${r.criteria.length} criteria${done?` · ${done}/${VENDORS.length} vendors rated`:''}</div></div>
-      <span class="chev">→</span></button>`;
-  }).join('');
-}
-
-function pickReviewer(k){ curReviewer=k; hide('s-entry'); goVendors(); }
-
-function goVendors() {
-  curVendor=null;
-  show('s-vendor'); hide('s-entry'); hide('s-rating'); hide('s-success');
-  const r=REVIEWERS[curReviewer];
-  const done=VENDORS.filter(v=>isDone(curReviewer,v.name));
-  const rem=VENDORS.filter(v=>!isDone(curReviewer,v.name));
-  document.getElementById('vGreeting').innerHTML=`
-    <div class="eyebrow">Step 2 of 3</div>
-    <h1 class="hero">Hey ${r.name} 👋</h1>
-    <p class="sub" style="margin-bottom:${done.length?'12px':'26px'}">${r.role} · ${r.criteria.length} criteria · ${rem.length} vendor${rem.length!==1?'s':''} remaining</p>
-    ${done.length?`<div class="info info-green">✓ Submitted: ${done.map(v=>v.name).join(', ')}</div>`:''}
-    ${rem.length===0?`<div class="info info-blue">🎉 All done! You've rated all 6 vendors.</div>`:`<p style="font-size:13px;color:var(--g500);margin-bottom:12px">Select a vendor to rate:</p>`}`;
-  document.getElementById('vList').innerHTML=rem.map(v=>`
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:7px">
-      <button class="vendor-btn" style="margin-bottom:0;flex:1" onclick="pickVendor('${v.name}')">
-        <span>${v.name}</span><span class="chev">→</span>
-      </button>
-      ${v.rfpUrl?`<a href="${v.rfpUrl}" target="_blank" style="flex-shrink:0;background:#fff;border:1px solid var(--g200);border-radius:10px;padding:14px 14px;font-size:12px;font-weight:500;color:var(--g600);text-decoration:none;white-space:nowrap;transition:border-color .15s" onmouseover="this.style.borderColor='var(--black)';this.style.color='var(--black)'" onmouseout="this.style.borderColor='var(--g200)';this.style.color='var(--g600)'">📄 RFP</a>`:''}
-    </div>`).join('');
-}
-
-function pickVendor(vn) {
-  curVendor=vn; curRec=getRec(curReviewer,vn);
-  curGroup=getGroups()[0];
-  // Show RFP link in header if available
-  const vendor = VENDORS.find(v=>v.name===vn);
-  const rfpLink = document.getElementById('fhRfpLink');
-  if(rfpLink && vendor?.rfpUrl){ rfpLink.href=vendor.rfpUrl; rfpLink.style.display='block'; }
-  else if(rfpLink){ rfpLink.style.display='none'; }
-  show('s-rating'); hide('s-vendor'); renderForm();
-}
-
-function getGroups(){ return [...new Set(REVIEWERS[curReviewer].criteria.map(id=>CRITERIA[id].grp))]; }
-
-function renderForm() {
-  document.getElementById('fhVendor').textContent=curVendor;
-  updateProg(); renderGTabs(); renderCards();
-}
-
-function renderGTabs() {
-  const grps=getGroups();
-  document.getElementById('gTabs').innerHTML=grps.map(g=>{
-    const gc=REVIEWERS[curReviewer].criteria.filter(id=>CRITERIA[id].grp===g);
-    const rated=gc.filter(id=>getScore(curReviewer,curVendor,id)>0||getNa(curReviewer,curVendor,id)).length;
-    return`<div class="gtab-wrap">
-      <button class="gtab ${g===curGroup?'active':''}" onclick="switchGrp('${g}')">
-        ${GRP_I[g]} ${g}${rated?`<span class="gbadge">${rated}/${gc.length}</span>`:''}
-      </button>
-      <div class="gtip">${GRP_DESC[g]}</div>
-    </div>`;
-  }).join('');
-}
-
-function switchGrp(g){ curGroup=g; renderGTabs(); renderCards(); }
-
-function renderCards() {
-  const grps=getGroups(), isLast=curGroup===grps[grps.length-1], curIdx=grps.indexOf(curGroup);
-  const cids=REVIEWERS[curReviewer].criteria.filter(id=>CRITERIA[id].grp===curGroup);
-  document.getElementById('cCards').innerHTML=cids.map(id=>{
-    const c=CRITERIA[id];
-    const val=getScore(curReviewer,curVendor,id);
-    const isNa=getNa(curReviewer,curVendor,id);
-    const critCmt=getCritCmt(curReviewer,curVendor,id);
-    const stars=[1,2,3,4,5].map(i=>{
-      const isOn = !isNa && i<=val;
-      const mEnter = isNa ? '' : `onmouseenter="hov('${id}',${i})"`;
-      const mLeave = isNa ? '' : `onmouseleave="unho('${id}')"`;
-      const click  = isNa ? '' : `onclick="rateStar('${id}',${i})"`;
-      const dis    = isNa ? 'disabled style="opacity:.3"' : '';
-      return `<button class="star ${isOn?'on':''}" ${dis} ${mEnter} ${mLeave} ${click}>★</button>`;
-    }).join('');
-    return`<div class="ccard ${isNa?'na-rated':val>0?'rated':''}" id="cc-${id}">
-      <div class="ccard-top">
-        <div style="flex:1;min-width:150px">
-          <div class="clabel">${c.label}<span class="pri" style="${PRI_S[c.pri]}">${c.pri}</span></div>
-          <div class="cdesc">${c.desc}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
-          <div class="star-row">
-            <div id="sr-${id}">${stars}</div>
-            <button class="na-btn ${isNa?'active':''}" onclick="toggleNa('${id}')" title="Not applicable / don't know">N/A</button>
-          </div>
-          <div class="star-lbl" id="sl-${id}">${isNa?'N/A':val?SL[val]:''}</div>
-        </div>
-      </div>
-      ${c.guidance?`<div class="cguidance">💡 ${c.guidance}</div>`:''}
-      <div class="ccard-cmt">
-        <textarea rows="1" placeholder="Add a comment on this criterion (optional)…" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';setCritCmt('${curReviewer}','${curVendor}','${id}',this.value)">${critCmt}</textarea>
-      </div>
-    </div>`;
-  }).join('');
-  document.getElementById('navArrows').innerHTML=`
-    ${curIdx>0?`<button class="arr-prev" onclick="switchGrp('${grps[curIdx-1]}')">← ${grps[curIdx-1]}</button>`:''}
-    ${!isLast?`<button class="arr-next" onclick="switchGrp('${grps[curIdx+1]}')">${grps[curIdx+1]} →</button>`:''}`;
-  const ov=document.getElementById('overallSec');
-  if(isLast){
-    ov.style.display='block';
-    document.getElementById('ovVendor').textContent=curVendor;
-    updateRecBtns();
-    document.getElementById('cmtArea').value=getCmt(curReviewer,curVendor);
-    document.getElementById('cmtArea').oninput=e=>setCmtLS(curReviewer,curVendor,e.target.value);
-    updateSubBtn();
-  } else { ov.style.display='none'; }
-}
-
-function hov(id,v){
-  if(getNa(curReviewer,curVendor,id)) return;
-  const row=document.getElementById('sr-'+id); if(!row)return;
-  row.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<v));
-  const lbl=document.getElementById('sl-'+id); if(lbl)lbl.textContent=SL[v];
-}
-function unho(id){
-  if(getNa(curReviewer,curVendor,id)) return;
-  const v=getScore(curReviewer,curVendor,id);
-  const row=document.getElementById('sr-'+id); if(!row)return;
-  row.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<v));
-  const lbl=document.getElementById('sl-'+id); if(lbl)lbl.textContent=v?SL[v]:'';
-}
-function rateStar(id,v){
-  if(getNa(curReviewer,curVendor,id)) return;
-  const cur=getScore(curReviewer,curVendor,id), nv=cur===v?0:v;
-  setScore(curReviewer,curVendor,id,nv);
-  const cc=document.getElementById('cc-'+id); if(cc){ cc.classList.toggle('rated',nv>0); cc.classList.remove('na-rated'); }
-  const row=document.getElementById('sr-'+id); if(row)row.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<nv));
-  const lbl=document.getElementById('sl-'+id); if(lbl)lbl.textContent=nv?SL[nv]:'';
-  updateProg(); renderGTabs(); updateSubBtn();
-}
-function toggleNa(id){
-  const wasNa=getNa(curReviewer,curVendor,id);
-  setNa(curReviewer,curVendor,id,!wasNa);
-  if(!wasNa){ setScore(curReviewer,curVendor,id,0); } // clear star if setting N/A
-  const cc=document.getElementById('cc-'+id);
-  if(cc){ cc.classList.toggle('na-rated',!wasNa); cc.classList.toggle('rated',false); }
-  const row=document.getElementById('sr-'+id);
-  if(row){ row.querySelectorAll('.star').forEach(s=>{ s.classList.remove('on'); s.disabled=!wasNa; s.style.opacity=!wasNa?'0.3':'1'; }); }
-  const lbl=document.getElementById('sl-'+id); if(lbl)lbl.textContent=!wasNa?'N/A':'';
-  const naBtn=cc?.querySelector('.na-btn'); if(naBtn)naBtn.classList.toggle('active',!wasNa);
-  updateProg(); renderGTabs(); updateSubBtn();
-}
-function updateProg(){
-  const cids=REVIEWERS[curReviewer].criteria;
-  const answered=cids.filter(id=>getScore(curReviewer,curVendor,id)>0||getNa(curReviewer,curVendor,id)).length;
-  document.getElementById('fhProg').textContent=`${answered}/${cids.length} answered`;
-  document.getElementById('progFill').style.width=`${(answered/cids.length)*100}%`;
-}
-function setRec(v){ curRec=v; setRecLS(curReviewer,curVendor,v); updateRecBtns(); updateSubBtn(); }
-function updateRecBtns(){
-  ['Yes','Maybe','No'].forEach(r=>{ const b=document.getElementById('r'+r); if(b)b.className=`rec-btn ${curRec===r?'on':'off'}`; });
-}
-function updateSubBtn(){
-  const b=document.getElementById('subBtn'); if(!b)return;
-  const hasAny=REVIEWERS[curReviewer].criteria.some(id=>getScore(curReviewer,curVendor,id)>0);
-  b.disabled=!hasAny;
-  document.getElementById('subLabel').textContent=`Submit ratings for ${curVendor}`;
-}
-
-async function submitRating() {
-  const btn=document.getElementById('subBtn'); btn.disabled=true;
-  document.getElementById('subSpinner').style.display='block';
-  document.getElementById('subLabel').textContent='Saving…';
-  const r=REVIEWERS[curReviewer], cmt=document.getElementById('cmtArea').value;
-  const scores={}, naFlags={}, critComments={};
-  r.criteria.forEach(id=>{
-    const v=getScore(curReviewer,curVendor,id);
-    if(v>0) scores[id]=v;
-    if(getNa(curReviewer,curVendor,id)) naFlags[id]=true;
-    const cc=getCritCmt(curReviewer,curVendor,id);
-    if(cc) critComments[id]=cc;
-  });
-  const payload={ timestamp:new Date().toISOString(), reviewer:r.name, reviewerRole:r.role, vendor:curVendor, scores, naFlags, critComments, recommendation:curRec||'', comment:cmt };
-  await postToSheet(payload);
-  const d=ls(); d[`${curReviewer}:${curVendor}:_rec`]=curRec||'submitted'; lsSave(d);
-  document.getElementById('subSpinner').style.display='none';
-  show('s-success'); hide('s-rating');
-  document.getElementById('succVendor').textContent=curVendor;
-  const rem=VENDORS.filter(v=>!isDone(curReviewer,v.name));
-  document.getElementById('nextVBtn').style.display=rem.length>0?'inline-block':'none';
-  document.getElementById('allDoneMsg').style.display=rem.length===0?'block':'none';
-}
-
-// ══════════════════ TAB 3 — RESULTS ══════════════════
-
-async function loadResults() {
-  // Try sheet first, fall back to localStorage
-  let rows = await fetchFromSheet();
-  if (!rows) {
-    // Build rows from localStorage
-    rows = [];
-    Object.keys(REVIEWERS).forEach(rk => {
-      const r = REVIEWERS[rk];
-      VENDORS.forEach(v => {
-        const rec = getRec(rk, v.name);
-        if (!rec) return;
-        const scores = {};
-        r.criteria.forEach(id => { const s = getScore(rk, v.name, id); if(s>0) scores[id]=s; });
-        rows.push({ reviewer: r.name, reviewerRole: r.role, vendor: v.name, scores, recommendation: rec, comment: getCmt(rk, v.name) });
+function allCriteria() {
+  const map = {};
+  REVIEWERS.forEach(r => {
+    Object.entries(DATA[r].crit||{}).forEach(([crit,scores]) => {
+      if (!map[crit]) map[crit] = {};
+      Object.entries(scores).forEach(([v,s]) => {
+        if (s==null) return;
+        if (!map[crit][v]) map[crit][v] = [];
+        map[crit][v].push(s);
       });
     });
-  }
-  allRows = rows;
-  // Populate filters
-  const revs = [...new Set(rows.map(r=>r.reviewer))].sort();
-  const vns  = [...new Set(rows.map(r=>r.vendor))].sort();
-  const rSel = document.getElementById('filterReviewer');
-  const vSel = document.getElementById('filterVendor');
-  if(rSel){ rSel.innerHTML=`<option value="">All reviewers</option>`+revs.map(r=>`<option>${r}</option>`).join(''); }
-  if(vSel){ vSel.innerHTML=`<option value="">All vendors</option>`+vns.map(v=>`<option>${v}</option>`).join(''); }
-  renderRanking();
-  renderIndividual();
-  renderAggregated();
-}
-
-// ── RANKING ──
-function computeVendorScore(vendorName, rows) {
-  const vRows = rows.filter(r=>r.vendor===vendorName);
-  const groups = Object.keys(GRP_W);
-  const groupScores = {};
-  groups.forEach(g => {
-    const cids = Object.keys(CRITERIA).filter(id=>CRITERIA[id].grp===g);
-    let tW=0, tS=0;
-    cids.forEach(cid => {
-      const scores = vRows.flatMap(r=>r.scores&&r.scores[cid]?[r.scores[cid]]:[]);
-      if(scores.length){
-        const avg=scores.reduce((a,b)=>a+b,0)/scores.length;
-        tS+=avg*CRITERIA[cid].w; tW+=CRITERIA[cid].w;
-      }
+  });
+  const result = {};
+  Object.entries(map).forEach(([crit,vmap]) => {
+    result[crit] = {};
+    Object.entries(vmap).forEach(([v,arr]) => {
+      result[crit][v] = arr.reduce((a,b)=>a+b,0)/arr.length;
     });
-    groupScores[g] = tW>0 ? tS/tW : null;
   });
-  let wS=0, wW=0;
-  groups.forEach(g=>{ const s=groupScores[g]; if(s!==null){wS+=s*GRP_W[g];wW+=GRP_W[g];} });
-  const total = wW>0 ? wS/wW : null;
-  const recs  = vRows.map(r=>r.recommendation).filter(Boolean);
-  const recCount = {Yes:recs.filter(r=>r==='Yes').length, Maybe:recs.filter(r=>r==='Maybe').length, No:recs.filter(r=>r==='No').length};
-  return { total, groupScores, recs, recCount, responses: vRows.length };
-}
-
-function recIcon(rc){ if(!rc||rc.Yes+rc.Maybe+rc.No===0)return'—'; if(rc.Yes>rc.Maybe&&rc.Yes>rc.No)return'✅'; if(rc.No>rc.Yes&&rc.No>rc.Maybe)return'❌'; return'🤔'; }
-function scCls(s){ if(s===null)return'na'; if(s>=4)return'hi'; if(s>=3)return'mi'; return'lo'; }
-function fmt(s){ return s===null?'—':s.toFixed(2); }
-
-function renderRanking() {
-  const vns = VENDORS.map(v=>v.name);
-  const scores = {};
-  vns.forEach(vn=>{ scores[vn]=computeVendorScore(vn,allRows); });
-  const sorted = [...vns].sort((a,b)=>{
-    const sa=scores[a].total, sb=scores[b].total;
-    if(sa===null&&sb===null)return 0; if(sa===null)return 1; if(sb===null)return -1; return sb-sa;
-  });
-  const ranked = sorted.filter(vn=>scores[vn].total!==null);
-  const unrated = sorted.filter(vn=>scores[vn].total===null);
-
-  // Podium (top 3)
-  document.getElementById('podiumWrap').innerHTML = ranked.slice(0,6).map((vn,i)=>{
-    const s=scores[vn];
-    return`<div class="podium-card ${i===0?'rank-1':''}">
-      <div class="podium-rank">#${i+1}</div>
-      <div class="podium-vendor">${vn}</div>
-      <div class="podium-score">${fmt(s.total)}</div>
-      <div class="podium-rec">${recIcon(s.recCount)}</div>
-      <div class="podium-votes">${s.responses} response${s.responses!==1?'s':''}</div>
-    </div>`;
-  }).join('')+(unrated.length?`<div class="podium-card" style="flex:2;min-width:200px;display:flex;align-items:center;justify-content:center;color:var(--g500);font-size:13px">${unrated.join(', ')} — no ratings yet</div>`:'');
-
-  // Summary table
-  const grps = Object.keys(GRP_W);
-  let h=`<div class="agg-wrap"><table class="agg-table">
-    <thead><tr>
-      <th>Vendor</th><th>Responses</th>
-      ${grps.map(g=>`<th class="vc">${GRP_I[g]} ${g}<br><span style="font-weight:400;font-size:10px">${GRP_W[g]}%</span></th>`).join('')}
-      <th class="vc" style="font-size:13px">Total</th>
-      <th class="vc">Recommend?</th>
-    </tr></thead><tbody>`;
-  sorted.forEach((vn,i)=>{
-    const s=scores[vn], rank=ranked.indexOf(vn);
-    h+=`<tr>
-      <td><strong>${rank>=0?`#${rank+1} `:''}${vn}</strong></td>
-      <td style="font-family:var(--mono);text-align:center">${s.responses}</td>
-      ${grps.map(g=>`<td class="sc-cell ${scCls(s.groupScores[g])}">${fmt(s.groupScores[g])}</td>`).join('')}
-      <td class="sc-cell ${scCls(s.total)}" style="font-weight:700;font-size:14px">${fmt(s.total)}</td>
-      <td style="text-align:center">${recIcon(s.recCount)}
-        <div style="font-size:10px;color:var(--g500);margin-top:2px">
-          ✅${s.recCount.Yes} 🤔${s.recCount.Maybe} ❌${s.recCount.No}
-        </div>
-      </td>
-    </tr>`;
-  });
-  h+=`</tbody></table></div>`;
-  document.getElementById('rankTableWrap').innerHTML = h;
-}
-
-// ── INDIVIDUAL RESPONSES ──
-function renderIndividual() {
-  const revFilter = document.getElementById('filterReviewer')?.value || '';
-  const vnFilter  = document.getElementById('filterVendor')?.value || '';
-  let rows = allRows.filter(r => (!revFilter||r.reviewer===revFilter) && (!vnFilter||r.vendor===vnFilter));
-
-  if (!rows.length) {
-    document.getElementById('indWrap').innerHTML = `<div class="info info-gray">No responses yet${revFilter||vnFilter?' for this filter':''}.</div>`;
-    return;
-  }
-
-  // Sort by reviewer then vendor
-  rows = [...rows].sort((a,b)=>a.reviewer.localeCompare(b.reviewer)||a.vendor.localeCompare(b.vendor));
-
-  // Sort criteria by group order then by id
-  const groupOrder = Object.keys(GRP_W);
-  const cidsPresent = [...new Set(rows.flatMap(r=>Object.keys(r.scores||{})))]
-    .filter(id=>CRITERIA[id])
-    .sort((a,b)=>{
-      const ga=groupOrder.indexOf(CRITERIA[a].grp), gb=groupOrder.indexOf(CRITERIA[b].grp);
-      return ga!==gb ? ga-gb : a.localeCompare(b);
-    });
-  const grpsPresent = [...new Set(cidsPresent.map(id=>CRITERIA[id]?.grp).filter(Boolean))];
-
-  let h = `<table class="ind-table">
-    <thead>
-      <tr>
-        <th rowspan="2">Reviewer</th><th rowspan="2">Role</th><th rowspan="2">Vendor</th>
-        ${grpsPresent.map(g=>{
-          const gc=cidsPresent.filter(id=>CRITERIA[id]?.grp===g);
-          return`<th colspan="${gc.length}" style="text-align:center;border-bottom:1px solid rgba(255,255,255,0.2)">${GRP_I[g]} ${g}</th>`;
-        }).join('')}
-        <th rowspan="2" class="c">Rec.</th><th rowspan="2" style="min-width:160px">Comment</th>
-      </tr>
-      <tr>
-        ${cidsPresent.map(id=>`<th class="c" title="${CRITERIA[id].desc}" style="font-size:10px;font-weight:400;white-space:nowrap;padding:4px 8px">${CRITERIA[id].label}</th>`).join('')}
-      </tr>
-    </thead><tbody>`;
-
-  // Group header rows per group
-  let lastGroup = null;
-  rows.forEach(row => {
-    const cids = cidsPresent.filter(id=>CRITERIA[id]);
-    h+=`<tr>
-      <td style="font-weight:600;white-space:nowrap">${row.reviewer}</td>
-      <td style="font-size:11px;color:var(--g500);white-space:nowrap">${row.reviewerRole||''}</td>
-      <td style="font-weight:500;white-space:nowrap">${row.vendor}</td>
-      ${cids.map(id=>{
-        const isNa = row.naFlags&&row.naFlags[id];
-        const v = row.scores?row.scores[id]:null;
-        const cc = row.critComments?row.critComments[id]:'';
-        if(isNa) return `<td class="sc-cell" style="color:#aaa;font-size:10px;font-family:var(--mono)" title="${cc||''}">N/A</td>`;
-        if(!v) return `<td class="sc-cell na" title="${cc||''}">—</td>`;
-        const stars=[1,2,3,4,5].map(i=>`<span class="${i<=v?'s1':'s0'}">★</span>`).join('');
-        return`<td class="sc-cell ${scCls(v)}" title="${cc||''}"><div>${v}</div><div class="stars-xs">${stars}</div>${cc?`<div style="font-size:9px;color:var(--g500);margin-top:2px;max-width:70px;white-space:normal;line-height:1.3">${cc}</div>`:''}</td>`;
-      }).join('')}
-      <td style="text-align:center;font-size:16px">${row.recommendation==='Yes'?'✅':row.recommendation==='No'?'❌':row.recommendation==='Maybe'?'🤔':'—'}</td>
-      <td style="font-size:11px;color:var(--g600);max-width:200px">${row.comment||''}</td>
-    </tr>`;
-  });
-  h+=`</tbody></table>`;
-  document.getElementById('indWrap').innerHTML = h;
-}
-
-// ── AGGREGATED SCORECARD ──
-function renderAggregated() {
-  const vns = VENDORS.map(v=>v.name);
-  const scores = {}; vns.forEach(vn=>{ scores[vn]=computeVendorScore(vn,allRows); });
-  const grps = Object.keys(GRP_W);
-  const sorted=[...vns].sort((a,b)=>{const sa=scores[a].total,sb=scores[b].total;if(sa===null&&sb===null)return 0;if(sa===null)return 1;if(sb===null)return-1;return sb-sa;});
-  const ranks={}; sorted.forEach((vn,i)=>{ ranks[vn]=scores[vn].total===null?'—':i+1; });
-
-  let h=`<table class="agg-table">
-    <thead><tr>
-      <th style="min-width:180px">Criterion</th><th style="min-width:60px">Weight</th>
-      ${vns.map(vn=>`<th class="vc">${vn}</th>`).join('')}
-    </tr></thead><tbody>`;
-
-  grps.forEach(g=>{
-    h+=`<tr class="gr"><td colspan="${2+vns.length}">${GRP_I[g]} ${g} · ${GRP_W[g]}% of total</td></tr>`;
-    const cids=Object.keys(CRITERIA).filter(id=>CRITERIA[id].grp===g);
-    cids.forEach(cid=>{
-      const c=CRITERIA[cid];
-      h+=`<tr><td style="padding-left:24px;font-weight:500">${c.label}<span style="font-size:11px;color:var(--g500);margin-left:5px">${c.desc}</span></td>
-        <td><span class="wbadge">×${c.w}</span></td>
-        ${vns.map(vn=>{
-          const vRows=allRows.filter(r=>r.vendor===vn);
-          const sc=vRows.flatMap(r=>r.scores&&r.scores[cid]?[r.scores[cid]]:[]);
-          if(!sc.length) return`<td class="sc-cell na">—</td>`;
-          const avg=sc.reduce((a,b)=>a+b,0)/sc.length;
-          const stars=[1,2,3,4,5].map(i=>`<span class="${i<=Math.round(avg)?'s1':'s0'}">★</span>`).join('');
-          return`<td class="sc-cell ${scCls(avg)}"><div style="font-size:11px">${avg.toFixed(1)}</div><div class="stars-xs">${stars}</div></td>`;
-        }).join('')}
-      </tr>`;
-    });
-    h+=`<tr style="background:var(--g50)"><td style="padding-left:24px;font-weight:600;font-size:12px">Group average</td>
-      <td style="font-weight:600;font-size:12px;font-family:var(--mono)">${GRP_W[g]}%</td>
-      ${vns.map(vn=>`<td class="sc-cell ${scCls(scores[vn].groupScores[g])}" style="font-weight:700">${fmt(scores[vn].groupScores[g])}</td>`).join('')}
-    </tr>`;
-  });
-
-  h+=`<tr class="tot"><td>TOTAL SCORE</td><td style="font-family:var(--mono);font-size:11px">100%</td>
-    ${vns.map(vn=>`<td class="sc-cell" style="font-size:14px">${fmt(scores[vn].total)}</td>`).join('')}</tr>`;
-  h+=`<tr class="rnk"><td style="font-weight:600">Rank</td><td></td>
-    ${vns.map(vn=>`<td style="text-align:center;font-weight:700;font-size:13px">${ranks[vn]}</td>`).join('')}</tr>`;
-  h+=`<tr class="rnk"><td style="font-weight:600">Recommend?</td><td style="font-size:10px;color:var(--g500)">${allRows.length} responses</td>
-    ${vns.map(vn=>`<td style="text-align:center;font-size:15px">${recIcon(scores[vn].recCount)}<div style="font-size:10px;color:var(--g500)">${scores[vn].recCount.Yes}✅ ${scores[vn].recCount.Maybe}🤔 ${scores[vn].recCount.No}❌</div></td>`).join('')}</tr>`;
-  h+=`</tbody></table>`;
-  document.getElementById('aggWrap').innerHTML=h;
-}
-
-// ── EXPORT: INDIVIDUAL RESPONSES ──
-function exportIndividualCSV() {
-  const revFilter = document.getElementById('filterReviewer')?.value || '';
-  const vnFilter  = document.getElementById('filterVendor')?.value || '';
-  let rows = allRows.filter(r => (!revFilter||r.reviewer===revFilter) && (!vnFilter||r.vendor===vnFilter));
-  rows = [...rows].sort((a,b)=>a.reviewer.localeCompare(b.reviewer)||a.vendor.localeCompare(b.vendor));
-
-  const groupOrder = Object.keys(GRP_W);
-  const cidsAll = Object.keys(CRITERIA).sort((a,b)=>{
-    const ga=groupOrder.indexOf(CRITERIA[a].grp), gb=groupOrder.indexOf(CRITERIA[b].grp);
-    return ga!==gb ? ga-gb : a.localeCompare(b);
-  });
-
-  const csvRows = [
-    ['Reviewer', 'Role', 'Vendor', 'Recommendation', 'Comment',
-     ...cidsAll.flatMap(id=>[`${CRITERIA[id].label} — Score`, `${CRITERIA[id].label} — N/A`, `${CRITERIA[id].label} — Comment`])],
-    ...rows.map(r => [
-      r.reviewer, r.reviewerRole||'', r.vendor, r.recommendation||'', r.comment||'',
-      ...cidsAll.flatMap(id => {
-        const isNa = r.naFlags&&r.naFlags[id];
-        const score = r.scores&&r.scores[id] ? r.scores[id] : '';
-        const cc = r.critComments&&r.critComments[id] ? r.critComments[id] : '';
-        return [isNa?'N/A':score, isNa?'yes':'', cc];
-      })
-    ])
-  ];
-  dlCSV(csvRows, 'dam_individual_responses.csv');
-}
-
-// ── EXPORT: AGGREGATED SCORECARD ──
-function exportAggregatedCSV() {
-  const vns = VENDORS.map(v=>v.name);
-  const scores = {}; vns.forEach(vn=>{ scores[vn]=computeVendorScore(vn,allRows); });
-  const sorted = [...vns].sort((a,b)=>{
-    const sa=scores[a].total, sb=scores[b].total;
-    if(sa===null&&sb===null)return 0; if(sa===null)return 1; if(sb===null)return -1; return sb-sa;
-  });
-
-  const csvRows = [['Category', 'Criterion', 'Description', 'Priority', 'Weight', ...vns]];
-  Object.keys(GRP_W).forEach(g => {
-    Object.keys(CRITERIA).filter(id=>CRITERIA[id].grp===g).forEach(cid => {
-      const c = CRITERIA[cid];
-      const row = [g, c.label, c.desc, c.pri, c.w];
-      vns.forEach(vn => {
-        const sc = allRows.filter(r=>r.vendor===vn).flatMap(r=>r.scores&&r.scores[cid]?[r.scores[cid]]:[]);
-        row.push(sc.length ? (sc.reduce((a,b)=>a+b,0)/sc.length).toFixed(2) : '');
-      });
-      csvRows.push(row);
-    });
-    csvRows.push([`${g} group average (${GRP_W[g]}%)`, '', '', '', '', ...vns.map(vn=>fmt(scores[vn].groupScores[g]))]);
-  });
-  csvRows.push(['TOTAL SCORE', '', '', '', '100%', ...vns.map(vn=>fmt(scores[vn].total))]);
-  csvRows.push(['Rank', '', '', '', '', ...sorted.map((vn,i)=>scores[vn].total!==null?i+1:'—')]);
-  csvRows.push(['Recommend: Yes', '', '', '', '', ...vns.map(vn=>scores[vn].recCount.Yes)]);
-  csvRows.push(['Recommend: Maybe', '', '', '', '', ...vns.map(vn=>scores[vn].recCount.Maybe)]);
-  csvRows.push(['Recommend: No', '', '', '', '', ...vns.map(vn=>scores[vn].recCount.No)]);
-  dlCSV(csvRows, 'dam_aggregated_scorecard.csv');
-}
-
-function dlCSV(rows, filename) {
-  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
-  a.download = filename;
-  a.click();
+  return result;
 }
 
 // ══════════════════ UTILS ══════════════════
-function show(id){ document.getElementById(id).style.display='block'; }
-function hide(id){ document.getElementById(id).style.display='none'; }
+function sc(s){if(s==null)return'na';if(s>=4)return'h';if(s>=3)return'm';return'l'}
+function badge(s){if(s==null)return`<span class="sbadge sn">—</span>`;const c=s>=4?'sh':s>=3?'sm':'sl';return`<span class="sbadge ${c}">${typeof s==='number'?s.toFixed(1):s}</span>`}
+function ri(r){return r==='Yes'?'✅':r==='No'?'❌':r==='Maybe'?'🤔':'—'}
+function sc_color(s){if(s==null)return'#e5e7eb';if(s>=4)return'#16a34a';if(s>=3)return'#d97706';return'#dc2626'}
+function showTab(t){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(b=>{if(b.getAttribute('onclick')===`showTab('${t}')`)b.classList.add('active')});
+}
+let selVendor=null, selReviewer=null, chartInst={};
 
-// ══════════════════ INIT ══════════════════
-renderRevList();
-checkParam();
+// ══════════════════ RENDER ══════════════════
+function init(){
+  // Pills
+  document.getElementById('pills').innerHTML = REVIEWERS.map(r=>
+    `<div class="rpill"><div class="dot" style="background:${RC[r]}"></div>${r}</div>`
+  ).join('')+`<div class="rpill" style="opacity:.4">${11-REVIEWERS.length} pending</div>`;
+
+  renderRanking();
+  renderVendorPills();
+  renderReviewerPills();
+  renderMatrix();
+}
+
+function renderRanking(){
+  const ranked = avgTotals();
+  let h = `<div style="font-size:11px;font-family:var(--mono);letter-spacing:2px;color:#aaa;text-transform:uppercase;margin-bottom:16px">
+    Average across ${REVIEWERS.length} reviewers · 1–5 scale · ${11-REVIEWERS.length} reviewers still pending
+  </div><div class="podium">`;
+  ranked.forEach((v,i)=>{
+    h+=`<div class="pcard ${i===0?'r1':''}" onclick="selectVendor('${v.vendor}')">
+      <div class="rank">#${i+1}</div>
+      <div class="vn" style="${i!==0?'color:var(--black)':''}">${v.short}</div>
+      <div class="sc" style="${i!==0?`color:${sc_color(v.avg)}`:''}">${v.avg.toFixed(2)}</div>
+      <div style="font-size:14px;margin-bottom:4px">${v.yes?`✅${v.yes} `:''}${v.maybe?`🤔${v.maybe} `:''}${v.no?`❌${v.no}`:''}</div>
+      <div class="votes">${v.scores.length} reviewer${v.scores.length!==1?'s':''}</div>
+    </div>`;
+  });
+  h+=`</div>`;
+
+  // Bar chart
+  h+=`<div class="card"><div class="card-title">Score per reviewer × vendor</div><div style="position:relative;height:240px"><canvas id="bc"></canvas></div></div>`;
+
+  // Recs heatmap
+  h+=`<div class="card"><div class="card-title">Recommendations</div><div style="overflow-x:auto"><table class="tbl"><thead><tr>
+    <th>Reviewer</th>${VENDORS.map((_,i)=>`<th class="c" style="font-size:11px">${VS[i]}</th>`).join('')}
+  </tr></thead><tbody>`;
+  REVIEWERS.forEach(r=>{
+    h+=`<tr><td style="font-weight:600"><div style="display:flex;align-items:center;gap:7px"><div class="dot" style="background:${RC[r]}"></div>${r}</div></td>
+    ${VENDORS.map(v=>`<td style="text-align:center;font-size:16px">${ri(DATA[r].rec?.[v])}</td>`).join('')}</tr>`;
+  });
+  h+=`</tbody></table></div></div>`;
+  document.getElementById('rankingContent').innerHTML=h;
+
+  setTimeout(()=>{
+    const ctx=document.getElementById('bc');
+    if(!ctx)return;
+    if(chartInst.bar)chartInst.bar.destroy();
+    chartInst.bar=new Chart(ctx,{type:'bar',data:{
+      labels:VS,
+      datasets:REVIEWERS.map(r=>({label:r,data:VENDORS.map(v=>DATA[r].total?.[v]??null),backgroundColor:RC[r],borderRadius:4,borderSkipped:false}))
+    },options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{family:'DM Sans',size:12},boxWidth:12}}},
+      scales:{y:{min:0,max:5,grid:{color:'#f0f0f0'},ticks:{font:{family:'DM Mono',size:11}}},x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:11}}}}}});
+  },50);
+}
+
+// ── BY VENDOR ──
+function renderVendorPills(){
+  document.getElementById('vendorPills').innerHTML=VENDORS.map((v,i)=>
+    `<button class="pill ${selVendor===v?'active':''}" onclick="selectVendor('${v}')">${VS[i]}</button>`
+  ).join('');
+}
+function selectVendor(v){
+  selVendor=v; showTab('vendor'); renderVendorPills();
+  const ranked=avgTotals(), vd=ranked.find(r=>r.vendor===v);
+  const criteria=allCriteria();
+  const vCrit=Object.entries(criteria).filter(([,d])=>d[v]!=null);
+
+  let h=`<div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap">
+    <div style="font-size:22px;font-weight:700">${v}</div>
+    ${vd?`<div style="font-size:32px;font-weight:700;font-family:var(--mono);color:${sc_color(vd.avg)}">${vd.avg.toFixed(2)}</div>
+    <div style="font-size:13px;display:flex;gap:10px">
+      ${vd.yes?`<span>✅ ${vd.yes} Yes</span>`:''}${vd.maybe?`<span>🤔 ${vd.maybe} Maybe</span>`:''}${vd.no?`<span>❌ ${vd.no} No</span>`:''}
+    </div>`:''}
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">`;
+  REVIEWERS.forEach(r=>{
+    const s=DATA[r].total?.[v], rec=DATA[r].rec?.[v];
+    if(s==null)return;
+    h+=`<div class="card" style="min-width:120px;flex:1;margin-bottom:0">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><div class="dot" style="background:${RC[r]}"></div><div style="font-size:12px;font-weight:600">${r}</div></div>
+      <div style="font-size:26px;font-weight:700;font-family:var(--mono);color:${sc_color(s)};margin-bottom:3px">${s.toFixed(2)}</div>
+      ${rec?`<div style="font-size:14px">${ri(rec)} ${rec}</div>`:''}
+    </div>`;
+  });
+  h+=`</div><div class="card"><div class="card-title">Criterion breakdown</div><div style="overflow-x:auto">
+  <table class="tbl"><thead><tr><th>Criterion</th>${REVIEWERS.map(r=>`<th class="c">${r}</th>`).join('')}<th class="c">Avg</th></tr></thead><tbody>`;
+  vCrit.forEach(([crit,avgs])=>{
+    h+=`<tr><td style="font-weight:500">${crit}</td>
+    ${REVIEWERS.map(r=>`<td class="hc">${DATA[r].crit?.[crit]?.[v]!=null?badge(DATA[r].crit[crit][v]):'<span style="color:#ccc;font-size:11px">—</span>'}</td>`).join('')}
+    <td class="hc">${badge(avgs[v])}</td></tr>`;
+  });
+  h+=`</tbody></table></div></div>`;
+  document.getElementById('vendorContent').innerHTML=h;
+}
+
+// ── BY REVIEWER ──
+function renderReviewerPills(){
+  document.getElementById('reviewerPills').innerHTML=REVIEWERS.map(r=>
+    `<button class="pill ${selReviewer===r?'active':''}" onclick="selectReviewer('${r}')" style="${selReviewer===r?`background:${RC[r]};border-color:${RC[r]}`:''}">${r}</button>`
+  ).join('');
+}
+function selectReviewer(r){
+  selReviewer=r; renderReviewerPills();
+  const rev=DATA[r];
+  const vscores=VENDORS.map((v,vi)=>({vendor:v,short:VS[vi],score:rev.total?.[v],rec:rev.rec?.[v]})).filter(v=>v.score!=null).sort((a,b)=>b.score-a.score);
+  let h=`<div style="font-size:18px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px">
+    <div class="dot" style="background:${RC[r]};width:10px;height:10px"></div>${r}
+  </div>
+  <div style="font-size:13px;color:var(--g500);margin-bottom:20px">${Object.keys(rev.crit).length} criteria rated · ${vscores.length} vendors scored</div>
+  <div class="card">`;
+  vscores.forEach(v=>{
+    h+=`<div class="pbar-wrap"><div class="pbar-top"><span style="font-weight:600">${v.vendor}</span>
+    <div style="display:flex;align-items:center;gap:8px"><span style="font-family:var(--mono);font-weight:700;color:${sc_color(v.score)}">${v.score.toFixed(2)}</span>${v.rec?`<span style="font-size:14px">${ri(v.rec)}</span>`:''}</div></div>
+    <div class="pbar"><div class="pbar-fill" style="width:${(v.score/5)*100}%;background:${RC[r]}"></div></div></div>`;
+  });
+  h+=`</div><div class="card"><div class="card-title">All criterion scores</div><div style="overflow-x:auto">
+  <table class="tbl"><thead><tr><th>Criterion</th>${VENDORS.map((_,i)=>`<th class="c" style="font-size:11px">${VS[i]}</th>`).join('')}</tr></thead><tbody>`;
+  Object.entries(rev.crit).forEach(([crit,scores],i)=>{
+    h+=`<tr style="background:${i%2===0?'var(--g50)':'#fff'}"><td style="font-weight:500">${crit}</td>
+    ${VENDORS.map(v=>scores[v]!=null?`<td class="hc">${badge(scores[v])}</td>`:`<td class="hc"><span style="color:#ddd;font-size:11px">—</span></td>`).join('')}</tr>`;
+  });
+  h+=`</tbody></table></div></div>`;
+  document.getElementById('reviewerContent').innerHTML=h;
+}
+
+// ── MATRIX ──
+function renderMatrix(){
+  const criteria=allCriteria(), ranked=avgTotals();
+  const sorted=[...ranked].sort((a,b)=>b.avg-a.avg);
+
+  // Group criteria
+  const grouped={};
+  Object.entries(criteria).forEach(([crit,scores])=>{
+    // Detect group from reviewer data
+    let grp='Other';
+    for(const r of REVIEWERS){
+      if(DATA[r].crit?.[crit]){
+        // Find which group this criterion belongs to based on the raw data structure
+        // We'll infer it from known groupings
+        break;
+      }
+    }
+    if(!grouped[grp])grouped[grp]=[];
+    grouped[grp].push([crit,scores]);
+  });
+
+  let h=`<div style="font-size:13px;color:var(--g500);margin-bottom:20px">Average scores across all reviewers · ${REVIEWERS.length} reviewers so far</div>
+  <div style="overflow-x:auto"><table class="tbl">
+  <thead><tr><th style="min-width:180px">Criterion</th>${VENDORS.map((_,i)=>`<th class="c" style="min-width:90px">${VS[i]}</th>`).join('')}</tr></thead><tbody>`;
+
+  Object.entries(criteria).forEach(([crit,scores])=>{
+    h+=`<tr><td style="font-weight:500">${crit}</td>${VENDORS.map(v=>scores[v]!=null?`<td class="hc">${badge(scores[v])}</td>`:`<td class="hc"><span style="color:#ddd;font-size:11px">—</span></td>`).join('')}</tr>`;
+  });
+
+  h+=`<tr class="tot"><td>AVG TOTAL SCORE</td>${VENDORS.map((v,vi)=>{const vd=ranked.find(r=>r.vendor===v);return`<td class="c">${vd?vd.avg.toFixed(2):'—'}</td>`}).join('')}</tr>`;
+  h+=`<tr style="background:var(--g50)"><td style="font-weight:600">Recommendations</td>${VENDORS.map(v=>{const vd=ranked.find(r=>r.vendor===v);if(!vd)return`<td class="c">—</td>`;return`<td class="c" style="font-size:13px">${vd.yes?`✅${vd.yes} `:''}${vd.maybe?`🤔${vd.maybe} `:''}${vd.no?`❌${vd.no}`:''}</td>`}).join('')}</tr>`;
+  h+=`</tbody></table></div>`;
+  document.getElementById('matrixContent').innerHTML=h;
+}
+
+init();
 </script>
 </body>
 </html>
