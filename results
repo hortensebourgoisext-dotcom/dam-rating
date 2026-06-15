@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAM Vendor Results · Qonto</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--black:#0a0a0a;--white:#fff;--g50:#fafafa;--g100:#f5f5f5;--g200:#ebebeb;--g500:#888;--g600:#666;--font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--high:#16a34a;--mid:#d97706;--low:#dc2626}
+body{font-family:var(--font);background:var(--g50);color:var(--black);min-height:100vh}
+button{font-family:var(--font);cursor:pointer;border:none}
+.nav{background:var(--black);padding:0 28px;position:sticky;top:0;z-index:100}
+.nav-inner{display:flex;align-items:center;flex-wrap:wrap;gap:0}
+.nav-brand{font-size:13px;font-weight:600;color:#fff;padding:16px 0;white-space:nowrap;margin-right:20px}
+.nav-brand span{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.4);margin-left:6px}
+.nav-tabs{display:flex}
+.nav-tab{height:52px;padding:0 15px;background:none;border-bottom:2px solid transparent;font-size:13px;font-weight:500;color:rgba(255,255,255,.5);transition:all .15s;white-space:nowrap}
+.nav-tab:hover{color:#fff}
+.nav-tab.active{color:#fff;border-bottom-color:#fff}
+.nav-right{display:flex;align-items:center;gap:6px;padding:8px 0;margin-left:auto;flex-wrap:wrap}
+.rpill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border-radius:20px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,.7)}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.screen{display:none}.screen.active{display:block}
+.page{max-width:1080px;margin:0 auto;padding:32px 24px}
+.card{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:20px;margin-bottom:20px}
+.card-title{font-size:13px;font-weight:600;margin-bottom:16px}
+.podium{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;align-items:flex-end}
+.pcard{flex:1;min-width:110px;border-radius:14px;padding:18px 14px;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s;border:1px solid var(--g200);background:#fff}
+.pcard:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.pcard.r1{background:var(--black);border-color:var(--black)}
+.pcard .rank{font-size:10px;font-family:var(--mono);margin-bottom:6px}
+.pcard.r1 .rank,.pcard.r1 .vn,.pcard.r1 .votes{color:rgba(255,255,255,.45)}
+.pcard .vn{font-size:13px;font-weight:700;margin-bottom:10px}
+.pcard .sc{font-size:30px;font-weight:700;font-family:var(--mono);margin-bottom:6px}
+.pcard.r1 .sc{color:#fff}
+.pcard .votes{font-size:10px}
+.sbadge{display:inline-block;border-radius:6px;padding:2px 8px;font-weight:700;font-size:12px;color:#fff}
+.sh{background:var(--high)}.sm{background:var(--mid)}.sl{background:var(--low)}.sn{background:var(--g200);color:var(--g600)}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:var(--black);color:#fff;padding:8px 12px;text-align:left;font-weight:500;white-space:nowrap}
+.tbl th.c{text-align:center}
+.tbl td{padding:8px 12px;border-bottom:1px solid var(--g100);vertical-align:middle}
+.tbl tr:hover td{background:var(--g50)}
+.tbl .gr td{background:var(--g100);font-size:10px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--g500);padding:5px 12px;font-weight:600}
+.tbl .tot td{background:var(--black)!important;color:#fff;font-weight:700;border:none;font-family:var(--mono)}
+.tbl .tot td.c{font-size:14px}
+.filter-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px}
+.pill{border-radius:20px;padding:6px 14px;font-size:12px;font-weight:500;transition:all .15s;border:1px solid var(--g200);background:#fff;color:var(--g600)}
+.pill:hover{border-color:var(--black);color:var(--black)}
+.pill.active{background:var(--black);color:#fff;border-color:var(--black)}
+.pbar-wrap{margin-bottom:12px}
+.pbar-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+.pbar{background:var(--g100);border-radius:6px;height:8px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:6px;transition:width .5s}
+.hc{text-align:center;padding:7px 8px!important}
+@media(max-width:600px){.nav-right{display:none}.page{padding:20px 14px}.pcard{min-width:90px}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">DAM Results <span>2026</span></div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showTab('ranking')">🏆 Ranking</button>
+      <button class="nav-tab" onclick="showTab('vendor')">📊 By vendor</button>
+      <button class="nav-tab" onclick="showTab('reviewer')">👤 By reviewer</button>
+      <button class="nav-tab" onclick="showTab('matrix')">🗂 Full matrix</button>
+    </div>
+    <div class="nav-right" id="pills"></div>
+  </div>
+</nav>
+<div class="screen active" id="tab-ranking"><div class="page" id="rankingContent"></div></div>
+<div class="screen" id="tab-vendor"><div class="page"><div class="filter-row" id="vendorPills"></div><div id="vendorContent"></div></div></div>
+<div class="screen" id="tab-reviewer"><div class="page"><div class="filter-row" id="reviewerPills"></div><div id="reviewerContent"></div></div></div>
+<div class="screen" id="tab-matrix"><div class="page" id="matrixContent"></div></div>
+
+<script>
+// ══════════════════ STATIC DATA ══════════════════
+const VENDORS = ['Canto','Cloudinary','Frontify','Smartsheet / Brandfolder','Aprimo','Bynder','Qontent (internal)'];
+const VS = ['Canto','Cloudinary','Frontify','Smartsheet','Aprimo','Bynder','Qontent'];
+const GROUPS = ['Functional','Design','Performance','Technical','Commercial'];
+const GRP_W = {Functional:30,Design:20,Performance:20,Technical:20,Commercial:10};
+const GRP_I = {Functional:'◈',Design:'◇',Performance:'◉',Technical:'◎',Commercial:'◫'};
+
+const RC = {Hortense:'#6366f1',Teresa:'#f59e0b',Soline:'#10b981',Eduardo:'#0ea5e9',Seb:'#84cc16'};
+
+// Raw criterion scores: DATA[reviewer][criterion] = {vendor: score}
+const DATA = {
+  Hortense: {
+    total: {Canto:3.48,Cloudinary:3.63,Frontify:3.60,'Smartsheet / Brandfolder':3.53,Aprimo:4.38,Bynder:4.38},
+    rec:   {Canto:'Maybe',Cloudinary:'Yes',Frontify:'Yes','Smartsheet / Brandfolder':'Maybe',Aprimo:'Yes',Bynder:'Yes'},
+    grp:   {Functional:{Canto:4.42,Cloudinary:5.00,Frontify:4.25,'Smartsheet / Brandfolder':4.32,Aprimo:4.79,Bynder:4.58},Design:{Canto:4.00,Cloudinary:4.00,Frontify:2.00,'Smartsheet / Brandfolder':4.00,Bynder:5.00},Performance:{Canto:1.31,Cloudinary:2.54,Frontify:3.54,'Smartsheet / Brandfolder':3.15,Aprimo:3.46,Bynder:3.15},Commercial:{Canto:4.00,Cloudinary:1.00,Frontify:5.00,'Smartsheet / Brandfolder':1.00,Aprimo:5.00,Bynder:5.00}},
+    crit: {
+      'Search & filters':     {Canto:5,Cloudinary:5,Frontify:5,'Smartsheet / Brandfolder':4,Aprimo:5,Bynder:5},
+      'AI semantic search':   {Canto:4,Cloudinary:5,Frontify:3,'Smartsheet / Brandfolder':3,Aprimo:5,Bynder:5},
+      'Asset lifecycle':      {Canto:5,Cloudinary:5,Frontify:5,'Smartsheet / Brandfolder':5,Aprimo:4,Bynder:3},
+      'Granular permissions': {Canto:5,Cloudinary:5,Frontify:5,Aprimo:5,Bynder:5},
+      'Taxonomy governance':  {Canto:3,Cloudinary:5,Frontify:3,'Smartsheet / Brandfolder':5,Aprimo:5,Bynder:5},
+      'Migration support':    {Canto:4,Cloudinary:4,Frontify:2,'Smartsheet / Brandfolder':4,Bynder:5},
+      'Performance data':     {Canto:1,Cloudinary:1,Frontify:2,'Smartsheet / Brandfolder':1,Aprimo:1,Bynder:1},
+      'Asset ↔ landing page': {Canto:1,Cloudinary:3,Frontify:4,'Smartsheet / Brandfolder':4,Aprimo:5,Bynder:5},
+      'Usage analytics':      {Canto:2,Cloudinary:4,Frontify:5,'Smartsheet / Brandfolder':5,Aprimo:5,Bynder:4},
+      'References quality':   {Canto:4,Cloudinary:1,Frontify:5,'Smartsheet / Brandfolder':1,Aprimo:5,Bynder:5},
+    }
+  },
+  Teresa: {
+    total: {Canto:1.83,Cloudinary:1.00,Frontify:2.22,'Smartsheet / Brandfolder':3.44,Aprimo:2.50,Bynder:2.78,'Qontent (internal)':3.56},
+    rec:   {Canto:'No',Cloudinary:'No',Frontify:'Maybe','Smartsheet / Brandfolder':'Yes',Aprimo:'Maybe',Bynder:'Maybe','Qontent (internal)':'Yes'},
+    grp:   {Performance:{Canto:1.83,Cloudinary:1.00,Frontify:2.22,'Smartsheet / Brandfolder':3.44,Aprimo:2.50,Bynder:2.78,'Qontent (internal)':3.56}},
+    crit: {
+      'Performance data':     {Canto:4,Cloudinary:1,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:3,'Qontent (internal)':4},
+      'Media data plug':      {Canto:1,Cloudinary:1,Frontify:2,'Smartsheet / Brandfolder':2,Aprimo:3,Bynder:3,'Qontent (internal)':4},
+      'Asset ↔ landing page': {Canto:1,Cloudinary:1,Frontify:1,'Smartsheet / Brandfolder':4,Aprimo:3,Bynder:3,'Qontent (internal)':4},
+      'Usage analytics':      {Canto:1,Cloudinary:1,Frontify:4,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:2,'Qontent (internal)':2},
+    }
+  },
+  Soline: {
+    total: {Canto:3.72,Cloudinary:2.74,Frontify:2.74,'Smartsheet / Brandfolder':3.98,Aprimo:1.87,Bynder:1.98,'Qontent (internal)':3.16},
+    rec:   {Canto:'No',Cloudinary:'No',Frontify:'No','Smartsheet / Brandfolder':'Maybe',Aprimo:'No',Bynder:'No','Qontent (internal)':'Maybe'},
+    grp:   {Functional:{Canto:3.88,Cloudinary:2.26,Frontify:2.26,'Smartsheet / Brandfolder':4.27,Aprimo:1.78,Bynder:2.27,'Qontent (internal)':3.26},Design:{Canto:3.47,Cloudinary:3.47,Frontify:3.47,'Smartsheet / Brandfolder':3.53,Aprimo:2.00,Bynder:1.53,'Qontent (internal)':3.00}},
+    crit: {
+      'Search & filters':     {Canto:4,Cloudinary:3,Frontify:2,'Smartsheet / Brandfolder':5,Aprimo:2,Bynder:3,'Qontent (internal)':4},
+      'Asset lifecycle':      {Canto:5,Cloudinary:2,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:3,'Qontent (internal)':2},
+      'Granular permissions': {Canto:4,Cloudinary:2,Frontify:3,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:2,'Qontent (internal)':2},
+      'Metadata schema':      {Canto:3,Cloudinary:2,Frontify:3,'Smartsheet / Brandfolder':5,Aprimo:2,Bynder:2,'Qontent (internal)':4},
+      'Taxonomy governance':  {Canto:4,Cloudinary:3,Frontify:2,'Smartsheet / Brandfolder':5,Aprimo:1,Bynder:2,'Qontent (internal)':4},
+      'AI auto-tagging':      {Canto:4,Cloudinary:2,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:3,Bynder:3,'Qontent (internal)':4},
+      'Version control':      {Canto:4,Cloudinary:2,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:1,Bynder:2,'Qontent (internal)':3},
+      'UX quality':           {Canto:3,Cloudinary:2,Frontify:2,'Smartsheet / Brandfolder':3,Aprimo:1,Bynder:1,'Qontent (internal)':3},
+      'Figma plugin':         {Canto:4,Cloudinary:4,Frontify:4,'Smartsheet / Brandfolder':3,Aprimo:2,Bynder:1,'Qontent (internal)':3},
+      'Migration support':    {Canto:3,Cloudinary:3,Frontify:3,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:2,'Qontent (internal)':3},
+    }
+  },
+  Eduardo: {
+    total: {Canto:2.65,Cloudinary:2.98,Frontify:1.58,'Smartsheet / Brandfolder':3.39,Aprimo:1.65,Bynder:3.08,'Qontent (internal)':4.55},
+    rec:   {Canto:'No',Cloudinary:'Maybe',Frontify:'No','Smartsheet / Brandfolder':'Yes',Aprimo:'No',Bynder:'Yes','Qontent (internal)':'Yes'},
+    grp:   {Functional:{Canto:2.18,Cloudinary:3.20,Frontify:1.97,'Smartsheet / Brandfolder':3.77,Aprimo:1.84,Bynder:3.70,'Qontent (internal)':4.24},Design:{Canto:2.00,Cloudinary:2.62,Frontify:1.00,'Smartsheet / Brandfolder':3.23,Aprimo:1.00,Bynder:2.23,'Qontent (internal)':5.00},Technical:{Canto:4.00,Cloudinary:3.00,Frontify:null,'Smartsheet / Brandfolder':3.00,Aprimo:2.00,Bynder:3.00}},
+    crit: {
+      'Search & filters':     {Canto:2,Cloudinary:3,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:4,'Qontent (internal)':4},
+      'AI semantic search':   {Canto:2,Cloudinary:4,Frontify:1,'Smartsheet / Brandfolder':2,Aprimo:2,Bynder:4,'Qontent (internal)':4},
+      'Asset lifecycle':      {Canto:3,Cloudinary:2,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:2,Bynder:4,'Qontent (internal)':4},
+      'Granular permissions': {Canto:3,Cloudinary:3,Frontify:2,'Smartsheet / Brandfolder':5,Aprimo:2,Bynder:4,'Qontent (internal)':5},
+      'Metadata schema':      {Canto:2,Cloudinary:4,Frontify:2,'Smartsheet / Brandfolder':4,Aprimo:1,Bynder:4,'Qontent (internal)':4},
+      'Taxonomy governance':  {Canto:2,Cloudinary:4,Frontify:1,'Smartsheet / Brandfolder':4,Aprimo:1,Bynder:4,'Qontent (internal)':4},
+      'AI auto-tagging':      {Canto:2,Cloudinary:3,Frontify:1,'Smartsheet / Brandfolder':3,Aprimo:2,Bynder:3,'Qontent (internal)':4},
+      'Version control':      {Canto:2,Cloudinary:3,Frontify:1,'Smartsheet / Brandfolder':4,Aprimo:1,Bynder:3,'Qontent (internal)':5},
+      'Brand portal':         {Canto:3,Cloudinary:3,Frontify:5,'Smartsheet / Brandfolder':3,Aprimo:3,Bynder:4,'Qontent (internal)':3},
+      'UX quality':           {Canto:1,Cloudinary:3,Frontify:4,'Smartsheet / Brandfolder':4,Aprimo:3,Bynder:3,'Qontent (internal)':5},
+      'Figma plugin':         {Canto:2,Cloudinary:3,Frontify:1,'Smartsheet / Brandfolder':4,Aprimo:1,Bynder:3,'Qontent (internal)':5},
+      'Figma sync':           {Canto:2,Cloudinary:2,Frontify:1,'Smartsheet / Brandfolder':2,Aprimo:1,Bynder:1,'Qontent (internal)':5},
+      'Rights management':    {Canto:4,Cloudinary:3,Frontify:null,'Smartsheet / Brandfolder':3,Aprimo:2,Bynder:3},
+    }
+  },
+  Seb: {
+    total: {Canto:3.33,Cloudinary:4.75,Frontify:4.50,'Smartsheet / Brandfolder':3.67,Aprimo:4.00,Bynder:3.75,'Qontent (internal)':5.00},
+    rec:   {Canto:'No',Cloudinary:'Yes',Frontify:'Yes','Smartsheet / Brandfolder':'Maybe',Aprimo:'Yes',Bynder:'Maybe'},
+    grp:   {Technical:{Canto:3.33,Cloudinary:4.75,Frontify:4.50,'Smartsheet / Brandfolder':3.67,Aprimo:4.00,Bynder:3.75,'Qontent (internal)':5.00}},
+    crit: {
+      'API quality':          {Canto:3,Cloudinary:5,Frontify:5,'Smartsheet / Brandfolder':4,Aprimo:4,Bynder:5},
+      'Webhooks':             {Canto:5,Cloudinary:5,Frontify:5,'Smartsheet / Brandfolder':4,Aprimo:5,Bynder:5,'Qontent (internal)':5},
+      'AI/LLM compatibility': {Canto:2,Cloudinary:5,Frontify:4,'Smartsheet / Brandfolder':3,Aprimo:2,Bynder:2,'Qontent (internal)':5},
+      'Scalability & uptime': {Cloudinary:4,Frontify:4,Aprimo:5,Bynder:3},
+    }
+  }
+};
+
+const REVIEWERS = Object.keys(DATA);
+
+// ══════════════════ COMPUTED ══════════════════
+function avgTotals() {
+  return VENDORS.map((v,vi) => {
+    const scores = REVIEWERS.map(r => DATA[r].total?.[v]).filter(s => s!=null && !isNaN(s));
+    const avg = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : null;
+    const recs = REVIEWERS.map(r => DATA[r].rec?.[v]).filter(Boolean);
+    return {
+      vendor:v, short:VS[vi], avg, scores,
+      yes:recs.filter(r=>r==='Yes').length,
+      maybe:recs.filter(r=>r==='Maybe').length,
+      no:recs.filter(r=>r==='No').length,
+      recs
+    };
+  }).filter(v=>v.avg!==null).sort((a,b)=>b.avg-a.avg);
+}
+
+function allCriteria() {
+  const map = {};
+  REVIEWERS.forEach(r => {
+    Object.entries(DATA[r].crit||{}).forEach(([crit,scores]) => {
+      if (!map[crit]) map[crit] = {};
+      Object.entries(scores).forEach(([v,s]) => {
+        if (s==null) return;
+        if (!map[crit][v]) map[crit][v] = [];
+        map[crit][v].push(s);
+      });
+    });
+  });
+  const result = {};
+  Object.entries(map).forEach(([crit,vmap]) => {
+    result[crit] = {};
+    Object.entries(vmap).forEach(([v,arr]) => {
+      result[crit][v] = arr.reduce((a,b)=>a+b,0)/arr.length;
+    });
+  });
+  return result;
+}
+
+// ══════════════════ UTILS ══════════════════
+function sc(s){if(s==null)return'na';if(s>=4)return'h';if(s>=3)return'm';return'l'}
+function badge(s){if(s==null)return`<span class="sbadge sn">—</span>`;const c=s>=4?'sh':s>=3?'sm':'sl';return`<span class="sbadge ${c}">${typeof s==='number'?s.toFixed(1):s}</span>`}
+function ri(r){return r==='Yes'?'✅':r==='No'?'❌':r==='Maybe'?'🤔':'—'}
+function sc_color(s){if(s==null)return'#e5e7eb';if(s>=4)return'#16a34a';if(s>=3)return'#d97706';return'#dc2626'}
+function showTab(t){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(b=>{if(b.getAttribute('onclick')===`showTab('${t}')`)b.classList.add('active')});
+}
+let selVendor=null, selReviewer=null, chartInst={};
+
+// ══════════════════ RENDER ══════════════════
+function init(){
+  // Pills
+  document.getElementById('pills').innerHTML = REVIEWERS.map(r=>
+    `<div class="rpill"><div class="dot" style="background:${RC[r]}"></div>${r}</div>`
+  ).join('')+`<div class="rpill" style="opacity:.4">${11-REVIEWERS.length} pending</div>`;
+
+  renderRanking();
+  renderVendorPills();
+  renderReviewerPills();
+  renderMatrix();
+}
+
+function renderRanking(){
+  const ranked = avgTotals();
+  let h = `<div style="font-size:11px;font-family:var(--mono);letter-spacing:2px;color:#aaa;text-transform:uppercase;margin-bottom:16px">
+    Average across ${REVIEWERS.length} reviewers · 1–5 scale · ${11-REVIEWERS.length} reviewers still pending
+  </div><div class="podium">`;
+  ranked.forEach((v,i)=>{
+    h+=`<div class="pcard ${i===0?'r1':''}" onclick="selectVendor('${v.vendor}')">
+      <div class="rank">#${i+1}</div>
+      <div class="vn" style="${i!==0?'color:var(--black)':''}">${v.short}</div>
+      <div class="sc" style="${i!==0?`color:${sc_color(v.avg)}`:''}">${v.avg.toFixed(2)}</div>
+      <div style="font-size:14px;margin-bottom:4px">${v.yes?`✅${v.yes} `:''}${v.maybe?`🤔${v.maybe} `:''}${v.no?`❌${v.no}`:''}</div>
+      <div class="votes">${v.scores.length} reviewer${v.scores.length!==1?'s':''}</div>
+    </div>`;
+  });
+  h+=`</div>`;
+
+  // Bar chart
+  h+=`<div class="card"><div class="card-title">Score per reviewer × vendor</div><div style="position:relative;height:240px"><canvas id="bc"></canvas></div></div>`;
+
+  // Recs heatmap
+  h+=`<div class="card"><div class="card-title">Recommendations</div><div style="overflow-x:auto"><table class="tbl"><thead><tr>
+    <th>Reviewer</th>${VENDORS.map((_,i)=>`<th class="c" style="font-size:11px">${VS[i]}</th>`).join('')}
+  </tr></thead><tbody>`;
+  REVIEWERS.forEach(r=>{
+    h+=`<tr><td style="font-weight:600"><div style="display:flex;align-items:center;gap:7px"><div class="dot" style="background:${RC[r]}"></div>${r}</div></td>
+    ${VENDORS.map(v=>`<td style="text-align:center;font-size:16px">${ri(DATA[r].rec?.[v])}</td>`).join('')}</tr>`;
+  });
+  h+=`</tbody></table></div></div>`;
+  document.getElementById('rankingContent').innerHTML=h;
+
+  setTimeout(()=>{
+    const ctx=document.getElementById('bc');
+    if(!ctx)return;
+    if(chartInst.bar)chartInst.bar.destroy();
+    chartInst.bar=new Chart(ctx,{type:'bar',data:{
+      labels:VS,
+      datasets:REVIEWERS.map(r=>({label:r,data:VENDORS.map(v=>DATA[r].total?.[v]??null),backgroundColor:RC[r],borderRadius:4,borderSkipped:false}))
+    },options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{family:'DM Sans',size:12},boxWidth:12}}},
+      scales:{y:{min:0,max:5,grid:{color:'#f0f0f0'},ticks:{font:{family:'DM Mono',size:11}}},x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:11}}}}}});
+  },50);
+}
+
+// ── BY VENDOR ──
+function renderVendorPills(){
+  document.getElementById('vendorPills').innerHTML=VENDORS.map((v,i)=>
+    `<button class="pill ${selVendor===v?'active':''}" onclick="selectVendor('${v}')">${VS[i]}</button>`
+  ).join('');
+}
+function selectVendor(v){
+  selVendor=v; showTab('vendor'); renderVendorPills();
+  const ranked=avgTotals(), vd=ranked.find(r=>r.vendor===v);
+  const criteria=allCriteria();
+  const vCrit=Object.entries(criteria).filter(([,d])=>d[v]!=null);
+
+  let h=`<div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap">
+    <div style="font-size:22px;font-weight:700">${v}</div>
+    ${vd?`<div style="font-size:32px;font-weight:700;font-family:var(--mono);color:${sc_color(vd.avg)}">${vd.avg.toFixed(2)}</div>
+    <div style="font-size:13px;display:flex;gap:10px">
+      ${vd.yes?`<span>✅ ${vd.yes} Yes</span>`:''}${vd.maybe?`<span>🤔 ${vd.maybe} Maybe</span>`:''}${vd.no?`<span>❌ ${vd.no} No</span>`:''}
+    </div>`:''}
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">`;
+  REVIEWERS.forEach(r=>{
+    const s=DATA[r].total?.[v], rec=DATA[r].rec?.[v];
+    if(s==null)return;
+    h+=`<div class="card" style="min-width:120px;flex:1;margin-bottom:0">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><div class="dot" style="background:${RC[r]}"></div><div style="font-size:12px;font-weight:600">${r}</div></div>
+      <div style="font-size:26px;font-weight:700;font-family:var(--mono);color:${sc_color(s)};margin-bottom:3px">${s.toFixed(2)}</div>
+      ${rec?`<div style="font-size:14px">${ri(rec)} ${rec}</div>`:''}
+    </div>`;
+  });
+  h+=`</div><div class="card"><div class="card-title">Criterion breakdown</div><div style="overflow-x:auto">
+  <table class="tbl"><thead><tr><th>Criterion</th>${REVIEWERS.map(r=>`<th class="c">${r}</th>`).join('')}<th class="c">Avg</th></tr></thead><tbody>`;
+  vCrit.forEach(([crit,avgs])=>{
+    h+=`<tr><td style="font-weight:500">${crit}</td>
+    ${REVIEWERS.map(r=>`<td class="hc">${DATA[r].crit?.[crit]?.[v]!=null?badge(DATA[r].crit[crit][v]):'<span style="color:#ccc;font-size:11px">—</span>'}</td>`).join('')}
+    <td class="hc">${badge(avgs[v])}</td></tr>`;
+  });
+  h+=`</tbody></table></div></div>`;
+  document.getElementById('vendorContent').innerHTML=h;
+}
+
+// ── BY REVIEWER ──
+function renderReviewerPills(){
+  document.getElementById('reviewerPills').innerHTML=REVIEWERS.map(r=>
+    `<button class="pill ${selReviewer===r?'active':''}" onclick="selectReviewer('${r}')" style="${selReviewer===r?`background:${RC[r]};border-color:${RC[r]}`:''}">${r}</button>`
+  ).join('');
+}
+function selectReviewer(r){
+  selReviewer=r; renderReviewerPills();
+  const rev=DATA[r];
+  const vscores=VENDORS.map((v,vi)=>({vendor:v,short:VS[vi],score:rev.total?.[v],rec:rev.rec?.[v]})).filter(v=>v.score!=null).sort((a,b)=>b.score-a.score);
+  let h=`<div style="font-size:18px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px">
+    <div class="dot" style="background:${RC[r]};width:10px;height:10px"></div>${r}
+  </div>
+  <div style="font-size:13px;color:var(--g500);margin-bottom:20px">${Object.keys(rev.crit).length} criteria rated · ${vscores.length} vendors scored</div>
+  <div class="card">`;
+  vscores.forEach(v=>{
+    h+=`<div class="pbar-wrap"><div class="pbar-top"><span style="font-weight:600">${v.vendor}</span>
+    <div style="display:flex;align-items:center;gap:8px"><span style="font-family:var(--mono);font-weight:700;color:${sc_color(v.score)}">${v.score.toFixed(2)}</span>${v.rec?`<span style="font-size:14px">${ri(v.rec)}</span>`:''}</div></div>
+    <div class="pbar"><div class="pbar-fill" style="width:${(v.score/5)*100}%;background:${RC[r]}"></div></div></div>`;
+  });
+  h+=`</div><div class="card"><div class="card-title">All criterion scores</div><div style="overflow-x:auto">
+  <table class="tbl"><thead><tr><th>Criterion</th>${VENDORS.map((_,i)=>`<th class="c" style="font-size:11px">${VS[i]}</th>`).join('')}</tr></thead><tbody>`;
+  Object.entries(rev.crit).forEach(([crit,scores],i)=>{
+    h+=`<tr style="background:${i%2===0?'var(--g50)':'#fff'}"><td style="font-weight:500">${crit}</td>
+    ${VENDORS.map(v=>scores[v]!=null?`<td class="hc">${badge(scores[v])}</td>`:`<td class="hc"><span style="color:#ddd;font-size:11px">—</span></td>`).join('')}</tr>`;
+  });
+  h+=`</tbody></table></div></div>`;
+  document.getElementById('reviewerContent').innerHTML=h;
+}
+
+// ── MATRIX ──
+function renderMatrix(){
+  const criteria=allCriteria(), ranked=avgTotals();
+  const sorted=[...ranked].sort((a,b)=>b.avg-a.avg);
+
+  // Group criteria
+  const grouped={};
+  Object.entries(criteria).forEach(([crit,scores])=>{
+    // Detect group from reviewer data
+    let grp='Other';
+    for(const r of REVIEWERS){
+      if(DATA[r].crit?.[crit]){
+        // Find which group this criterion belongs to based on the raw data structure
+        // We'll infer it from known groupings
+        break;
+      }
+    }
+    if(!grouped[grp])grouped[grp]=[];
+    grouped[grp].push([crit,scores]);
+  });
+
+  let h=`<div style="font-size:13px;color:var(--g500);margin-bottom:20px">Average scores across all reviewers · ${REVIEWERS.length} reviewers so far</div>
+  <div style="overflow-x:auto"><table class="tbl">
+  <thead><tr><th style="min-width:180px">Criterion</th>${VENDORS.map((_,i)=>`<th class="c" style="min-width:90px">${VS[i]}</th>`).join('')}</tr></thead><tbody>`;
+
+  Object.entries(criteria).forEach(([crit,scores])=>{
+    h+=`<tr><td style="font-weight:500">${crit}</td>${VENDORS.map(v=>scores[v]!=null?`<td class="hc">${badge(scores[v])}</td>`:`<td class="hc"><span style="color:#ddd;font-size:11px">—</span></td>`).join('')}</tr>`;
+  });
+
+  h+=`<tr class="tot"><td>AVG TOTAL SCORE</td>${VENDORS.map((v,vi)=>{const vd=ranked.find(r=>r.vendor===v);return`<td class="c">${vd?vd.avg.toFixed(2):'—'}</td>`}).join('')}</tr>`;
+  h+=`<tr style="background:var(--g50)"><td style="font-weight:600">Recommendations</td>${VENDORS.map(v=>{const vd=ranked.find(r=>r.vendor===v);if(!vd)return`<td class="c">—</td>`;return`<td class="c" style="font-size:13px">${vd.yes?`✅${vd.yes} `:''}${vd.maybe?`🤔${vd.maybe} `:''}${vd.no?`❌${vd.no}`:''}</td>`}).join('')}</tr>`;
+  h+=`</tbody></table></div>`;
+  document.getElementById('matrixContent').innerHTML=h;
+}
+
+init();
+</script>
+</body>
+</html>
